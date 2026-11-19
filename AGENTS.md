@@ -4,8 +4,8 @@ Este repositório (`c:\uniflow_api\api`) é responsável **exclusivamente pelo b
 
 ## 1. Escopo, Stack e Arquitetura Obrigatória
 - **Escopo**: Backend only. **Nunca** crie código de frontend (React, TypeScript, Vite, Tailwind, UI) neste repositório.
-- **Stack obrigatória**: Java 21, **Spring Boot 3.5.x**, Maven, PostgreSQL, Spring Data JPA, Hibernate, Spring Security, JWT, BCrypt, Flyway, Bean Validation, Lombok, Springdoc OpenAPI, JUnit 5, Mockito.
-  - *Nota sobre o estado inicial*: O `pom.xml` gerado inicialmente pelo Spring Initializr está com Spring Boot `4.1.2` e pacote `com.uniflow.api`. Os itens iniciais `BE-001`..`BE-005` alinham o projeto para **Spring Boot 3.5.x** e a estrutura modular `com.uniflow.*`.
+- **Stack obrigatória**: Java 21, Spring Boot (**`4.1.2`** mantido conforme decisão do usuário em `2026-11-19` sobre o projeto gerado no Initializr; especificação original citava `3.5.x`), Maven, PostgreSQL, Spring Data JPA, Hibernate, Spring Security, JWT, BCrypt, Flyway, Bean Validation, Lombok, Springdoc OpenAPI, JUnit 5, Mockito.
+  - *Nota sobre pacote inicial*: O entrypoint inicial está em `com.uniflow.api` e será organizado para a estrutura modular `com.uniflow.*` em `BE-005`.
 - **Arquitetura**: Monólito Modular com separação por domínio — **não implementar microsserviços**.
 - **Módulos**: `auth`, `usuario`, `semestre`, `disciplina`, `aula`, `atividade`, `calendario`, `trabalho`, `grupo`, `arquivo`, `notificacao`, `planejamento`, `assinatura`, `common`, `config`.
 - **Organização interna por responsabilidades**: `controller/`, `service/`, `repository/`, `entity/`, `dto/`, `mapper/`, `enums/`.

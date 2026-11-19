@@ -10,17 +10,17 @@ Este repositório atende exclusivamente ao backend e expõe uma API REST JSON (`
 
 ## 2. Stack e Estado Atual do `pom.xml`
 
-| Componente | Especificação do Documento Mestre | Estado Atual Observado (`pom.xml`) |
+| Componente | Especificação Original | Estado Adotado no `pom.xml` |
 | :--- | :--- | :--- |
 | Linguagem | Java 21 LTS | Java 21 (`21.0.9 LTS` ativo) |
-| Framework | Spring Boot 3.5.x (obrigatório) | `spring-boot-starter-parent` `4.1.2` (alinhar para `3.5.x` em `BE-001`) |
-| Web / REST | Spring Web | `spring-boot-starter-webmvc` (ajustar para `spring-boot-starter-web` no `3.5.x`) |
-| Segurança | Spring Security + JWT + BCrypt | `spring-boot-starter-security` (JWT a adicionar no `BE-002`) |
+| Framework | Spring Boot 3.5.x | `spring-boot-starter-parent` **`4.1.2`** *(mantido por decisão do usuário em `2026-11-19`)* |
+| Web / REST | Spring Web | `spring-boot-starter-webmvc` (Boot `4.1.2`) |
+| Segurança | Spring Security + JWT + BCrypt | `spring-boot-starter-security` + `jjwt` (`0.13.0`) |
 | Persistência | Spring Data JPA + Hibernate + PostgreSQL | `spring-boot-starter-data-jpa` + `postgresql` |
 | Migrations | Flyway | `spring-boot-starter-flyway` + `flyway-database-postgresql` |
-| Validação | Bean Validation | Pendente (`spring-boot-starter-validation` no `BE-002`) |
-| Documentação API | Springdoc OpenAPI | `springdoc-openapi-starter-webmvc-ui:3.2.0` (ajustar versão compatível com Spring Boot `3.5.x` no `BE-002`) |
-| Produtividade / Testes | Lombok + JUnit 5 + Mockito | `lombok` + `spring-boot-starter-*-test` |
+| Validação | Bean Validation | `spring-boot-starter-validation` |
+| Documentação API | Springdoc OpenAPI | `springdoc-openapi-starter-webmvc-ui:3.2.0` (compatível Boot `4.x`) |
+| Produtividade / Testes | Lombok + JUnit 5 + Mockito | `lombok` + `spring-boot-starter-*-test` + `spring-boot-testcontainers` (`testcontainers-postgresql`) |
 
 > **Regra de estabilidade**: Não atualizar versões principais de dependências automaticamente sem avaliar compatibilidade e registrar em [RELATORIO.md](file:///c:/uniflow_api/api/docs/RELATORIO.md).
 

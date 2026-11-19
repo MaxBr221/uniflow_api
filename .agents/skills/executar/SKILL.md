@@ -12,7 +12,7 @@ Use esta skill sempre que o usuário invocar `/executar <BE-XXX>` (ex.: `/execut
 ## Etapa 1: Análise Prévia e Plano Técnico (OBRIGATÓRIA antes de codar)
 
 1. **Identificar a Tarefa**:
-   - Normalize o argumento para o padrão oficial `BE-XXX` (maiúsculas e 3 dígitos; ex.: `be-044` -> `BE-044`, `be-1` -> `BE-001`, `44` -> `BE-044`; se o usuário digitar `back-XXX`, converta/confirme com o usuário se refere-se a `BE-XXX`).
+   - Normalize o argumento para o padrão oficial `BE-XXX` (maiúsculas e 3 dígitos; aceitando `be-044`, `BE-044`, `back-044`, `BACK-044` ou `44` -> `BE-044`; quando digitado como `back-XXX`, informe explicitamente o mapeamento para `BE-XXX` do `docs/BACKLOG.md`).
    - Se nenhum ID for informado, leia `docs/STATUS.md` e `docs/BACKLOG.md`, liste as próximas tarefas desbloqueadas e peça ao usuário informar o ID desejado.
 2. **Consultar Documentação e Backlog**:
    - Leia o bloco da tarefa em `docs/BACKLOG.md` (Épico, versão, prioridade, dependências, status e critério de aceite).

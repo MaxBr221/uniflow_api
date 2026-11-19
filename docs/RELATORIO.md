@@ -4,19 +4,19 @@ Este documento registra a evolução cronológica, entregas verificadas, métric
 
 ---
 
-## 1. Resumo Executivo Atual (`2026-11-16`)
+## 1. Resumo Executivo Atual (`2026-11-19`)
 
-- **Fase Atual**: Épico 1 (Preparação da estrutura inicial, aguardando autorização para `BE-001`..`BE-012`).
-- **Progresso do MVP 1.0 (Épicos 1–8)**: `0 / 119` tarefas concluídas (`0.0%`).
+- **Fase Atual**: Épico 1 em andamento (`BE-001` e `BE-002` concluídas; próximas desbloqueadas: `BE-003` e `BE-005`).
+- **Progresso do MVP 1.0 (Épicos 1–8)**: `2 / 119` tarefas concluídas (`1.7%`).
 - **Progresso Versão 1.1 (Épicos 9–10)**: `0 / 25` tarefas concluídas (`0.0%`).
 - **Progresso Versão 2.0 / Futura (Épicos 11–12)**: `0 / 14` tarefas (`FORA_DO_MVP`).
-- **Progresso Geral**: `0 / 158` tarefas concluídas (`0.0%`).
-- **Status do Build**: `.\mvnw.cmd test-compile` passando (`BUILD SUCCESS` com Java `21.0.9 LTS`).
-- **Endpoints implementados**: `0` | **Migrations Flyway**: `0` | **Testes de domínio**: `0`.
+- **Progresso Geral**: `2 / 158` tarefas concluídas (`1.3%`).
+- **Status do Build**: `.\mvnw.cmd test-compile` passando (`BUILD SUCCESS` com Java `21.0.9 LTS` e Spring Boot `4.1.2`); `DependenciesSmokeTest` passando (`2 / 2`).
+- **Endpoints implementados**: `0` | **Migrations Flyway**: `0` | **Testes passando**: `2` (`DependenciesSmokeTest`).
 
 ### Principais Pontos de Atenção
-1. Alinhar o `pom.xml` em `BE-001`/`BE-002` de `4.1.2` (skeleton Initializr) para a stack obrigatória **Spring Boot 3.5.x** + Java 21, adicionando `spring-boot-starter-validation` e JWT.
-2. Configurar PostgreSQL (`compose.yaml` + env vars), Flyway (`BE-004`) e `application.yml` (`BE-006`) antes de iniciar os módulos funcionais (`Épico 2` em diante).
+1. Mantido **Spring Boot `4.1.2`** (do esqueleto Initializr) por decisão do usuário em `2026-11-19` (`BE-001` concluída).
+2. Configurar PostgreSQL (`compose.yaml` + env vars em `BE-003`), Flyway (`BE-004`) e `application.yml` (`BE-006`) antes de executar `@SpringBootTest` completo e iniciar os módulos funcionais.
 3. Seguir rigorosamente as regras chave do backlog oficial:
    - Respostas de erro padronizadas com **Problem Details (RFC 7807)** (`BE-008`);
    - **Refresh token com rotação** e revogação no logout (`BE-024`..`BE-026`);
@@ -29,16 +29,29 @@ Este documento registra a evolução cronológica, entregas verificadas, métric
 
 | Métrica | Valor Atual | Meta MVP 1.0 |
 | :--- | :---: | :---: |
-| Tarefas `BE-XXX` concluídas | 0 | 119 (`Épicos 1–8`) |
+| Tarefas `BE-XXX` concluídas | 2 | 119 (`Épicos 1–8`) |
 | Tarefas Versão 1.1 concluídas | 0 | 25 (`Épicos 9–10`, pós-MVP) |
 | Migrations Flyway em `src/main/resources/db/migration/` | 0 | 7 (`V1`..`V7` no MVP 1.0) |
 | Endpoints REST implementados | 0 | Todos os de `MVP 1.0` em [API_CONTRACT.md](file:///c:/uniflow_api/api/docs/API_CONTRACT.md) |
 | Compilação (`.\mvnw.cmd test-compile`) | ✅ Passando | ✅ Passando |
-| Suíte de testes (`.\mvnw.cmd test`) | ⏳ Aguardando Épico 1 (`BE-003`/`004`/`006`/`012`) | ✅ 100% Passando |
+| Suíte de testes (`.\mvnw.cmd test`) | ⚠️ Parcial (`DependenciesSmokeTest` 2/2; `ApiApplicationTests` aguarda `BE-003`/`006`) | ✅ 100% Passando |
 
 ---
 
 ## 3. Histórico Cronológico de Execuções
+
+### [2026-11-19] — Execução `BE-002`: Configurar dependências do projeto (e conclusão de `BE-001`)
+- **Épico / Versão**: `Épico 1` | `MVP 1.0`
+- **O que foi implementado**:
+  - `BE-001` marcada como `CONCLUIDO` mantendo o projeto inicial Spring Boot **`4.1.2`** + Maven + Java 21 por decisão explícita do usuário.
+  - Em `BE-002`, configuradas em [pom.xml](file:///c:/uniflow_api/api/pom.xml) as dependências faltantes da stack obrigatória: `spring-boot-starter-validation`, `io.jsonwebtoken:jjwt-{api,impl,jackson}` (`0.13.0`), `spring-boot-starter-validation-test`, `spring-boot-testcontainers`, `org.testcontainers:testcontainers-junit-jupiter` e `org.testcontainers:testcontainers-postgresql`, além de `<name>` e `<description>` do projeto.
+  - Criado [DependenciesSmokeTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/api/DependenciesSmokeTest.java) validando Bean Validation (Hibernate Validator), `BCryptPasswordEncoder`, assinatura/leitura JWT com `jjwt-jackson`, JUnit e Mockito em runtime com Spring Boot `4.1.2`.
+- **Arquivos criados**: [DependenciesSmokeTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/api/DependenciesSmokeTest.java)
+- **Arquivos modificados**: [pom.xml](file:///c:/uniflow_api/api/pom.xml), [AGENTS.md](file:///c:/uniflow_api/api/AGENTS.md), [README.md](file:///c:/uniflow_api/api/README.md), [ARCHITECTURE.md](file:///c:/uniflow_api/api/docs/ARCHITECTURE.md), [BACKLOG.md](file:///c:/uniflow_api/api/docs/BACKLOG.md), [STATUS.md](file:///c:/uniflow_api/api/docs/STATUS.md), [RELATORIO.md](file:///c:/uniflow_api/api/docs/RELATORIO.md)
+- **Verificação**:
+  - `.\mvnw.cmd test-compile` -> `BUILD SUCCESS` (`48.051s`)
+  - `.\mvnw.cmd test "-Dtest=DependenciesSmokeTest"` -> `Tests run: 2, Failures: 0, Errors: 0, Skipped: 0` (`BUILD SUCCESS`)
+- **Pendências identificadas**: `ApiApplicationTests` (`@SpringBootTest`) permanece dependendo de datasource PostgreSQL e `application.yml` (`BE-003`, `BE-004`, `BE-006`); reorganização do pacote `com.uniflow.api` -> `com.uniflow.*` segue na `BE-005`.
 
 ### [2026-11-16] — Checkpoint `#001`: Adoção do Backlog Oficial (`BE-001`..`BE-158`) e Processo de Aprovação em 2 Etapas
 - **Tipo**: Governança, Especificação & Alinhamento Arquitetural

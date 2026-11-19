@@ -1,8 +1,8 @@
 # Status do Projeto — UniFlow Backend (`uniflow-backend`)
 
-> **Última atualização**: `2026-11-16`
+> **Última atualização**: `2026-11-19`
 > **Repositório**: `c:\uniflow_api\api` (exclusivo Backend)
-> **Estado Geral**: `INICIALIZACAO / SKELETON` — Apenas esqueleto inicial Spring Initializr + documentação e backlog oficial (`BE-001`..`BE-158`); nenhum épico funcional iniciado ainda.
+> **Estado Geral**: `EM_ANDAMENTO (Épico 1)` — `BE-001` e `BE-002` concluídas; preparando banco PostgreSQL, Flyway, ambientes e pacotes de domínio.
 
 ---
 
@@ -10,13 +10,13 @@
 
 | Recorte | Concluído | Em Andamento | Pendente | Fora do MVP | Total | % Concluído |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **MVP 1.0 (Épicos 1–8: `BE-001`..`BE-119`)** | 0 | 0 | 119 | 0 | 119 | **0.0%** |
+| **MVP 1.0 (Épicos 1–8: `BE-001`..`BE-119`)** | 2 | 0 | 117 | 0 | 119 | **1.7%** |
 | **Versão 1.1 (Épicos 9–10: `BE-120`..`BE-144`)** | 0 | 0 | 25 | 0 | 25 | **0.0%** |
 | **Versão 2.0 / Futura (Épicos 11–12: `BE-145`..`BE-158`)** | 0 | 0 | 0 | 14 | 14 | **0.0%** |
-| **TOTAL GERAL** | **0** | **0** | **144** | **14** | **158** | **0.0%** |
+| **TOTAL GERAL** | **2** | **0** | **142** | **14** | **158** | **1.3%** |
 
 ```text
-MVP 1.0 (Épicos 1-8)    : [░░░░░░░░░░░░░░░░░░░░]  0.0% (0 / 119)
+MVP 1.0 (Épicos 1-8)    : [░░░░░░░░░░░░░░░░░░░░]  1.7% (2 / 119)
 v1.1    (Épicos 9-10)   : [░░░░░░░░░░░░░░░░░░░░]  0.0% (0 / 25)
 v2.0    (Épicos 11-12)  : [░░░░░░░░░░░░░░░░░░░░]  0.0% (0 / 14) - Aguardando validação do MVP
 ```
@@ -27,7 +27,7 @@ v2.0    (Épicos 11-12)  : [░░░░░░░░░░░░░░░░░�
 
 | Épico | Título | Módulo(s) | Versão Alvo | Faixa | Concluídas | Status |
 | :---: | :--- | :--- | :--- | :--- | :---: | :--- |
-| **1** | Configuração e estrutura do projeto | `config`, `common` | `MVP 1.0` | `BE-001`..`BE-012` | 0 / 12 | Não iniciado |
+| **1** | Configuração e estrutura do projeto | `config`, `common` | `MVP 1.0` | `BE-001`..`BE-012` | 2 / 12 | Em andamento |
 | **2** | Autenticação e usuários | `MOD-01`, `MOD-02` | `MVP 1.0` | `BE-013`..`BE-031` | 0 / 19 | Não iniciado |
 | **3** | Semestres acadêmicos | `MOD-03` | `MVP 1.0` | `BE-032`..`BE-045` | 0 / 14 | Não iniciado |
 | **4** | Disciplinas | `MOD-04` | `MVP 1.0` | `BE-046`..`BE-058` | 0 / 13 | Não iniciado |
@@ -44,33 +44,32 @@ v2.0    (Épicos 11-12)  : [░░░░░░░░░░░░░░░░░�
 
 ## 3. Estado Real Observado no Workspace
 
-Fatos verificados diretamente em `c:\uniflow_api\api`:
+Fatos verificados diretamente em `c:\uniflow_api\api` (`2026-11-19`):
 - **Java**: `21.0.9 LTS` ativo no ambiente.
-- **Compilação Maven**: `.\mvnw.cmd test-compile` executado em `2026-11-16` com resultado **`BUILD SUCCESS`**.
-- **Spring Boot no `pom.xml`**: atualmente `4.1.2` (com `spring-boot-starter-data-jpa`, `spring-boot-starter-flyway`, `spring-boot-starter-security`, `spring-boot-starter-webmvc`, `flyway-database-postgresql`, `springdoc-openapi-starter-webmvc-ui:3.2.0`, `postgresql`, `lombok`).
-- **Código Java existente**: apenas [ApiApplication.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/api/ApiApplication.java) e [ApiApplicationTests.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/api/ApiApplicationTests.java) no pacote `com.uniflow.api`.
+- **Compilação Maven**: `.\mvnw.cmd test-compile` -> **`BUILD SUCCESS`** (`48.051s`).
+- **Teste executado**: `.\mvnw.cmd test "-Dtest=DependenciesSmokeTest"` -> **`Tests run: 2, Failures: 0, Errors: 0, Skipped: 0`** (`BUILD SUCCESS`).
+- **Spring Boot no `pom.xml`**: `4.1.2` *(mantido a partir do Initializr por decisão do usuário em `2026-11-19`)*, com `spring-boot-starter-data-jpa`, `spring-boot-starter-flyway`, `spring-boot-starter-security`, `spring-boot-starter-validation`, `spring-boot-starter-webmvc`, `flyway-database-postgresql`, `springdoc-openapi-starter-webmvc-ui:3.2.0`, `jjwt` (`0.13.0`), `postgresql`, `lombok`, `spring-boot-starter-*-test`, `spring-boot-testcontainers`, `testcontainers-junit-jupiter`, `testcontainers-postgresql`.
+- **Código Java existente**: [ApiApplication.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/api/ApiApplication.java), [ApiApplicationTests.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/api/ApiApplicationTests.java) e [DependenciesSmokeTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/api/DependenciesSmokeTest.java) no pacote `com.uniflow.api`.
 - **Configuração atual**: apenas [application.properties](file:///c:/uniflow_api/api/src/main/resources/application.properties) (`spring.application.name=api`).
-- **Migrations Flyway**: pasta `src/main/resources/db/migration/` está **vazia** (`0` migrations).
+- **Migrations Flyway**: pasta `src/main/resources/db/migration/` ainda está **vazia** (`0` migrations).
 
 ---
 
 ## 4. Alertas Técnicos e Decisões Pendentes
 
-1. **Alinhamento obrigatório para Spring Boot `3.5.x` (`BE-001` / `BE-002`)**:
-   - O `pom.xml` gerado pelo Initializr está em `4.1.2`, mas a stack obrigatória do projeto exige **Spring Boot 3.5.x** + Java 21.
-   - `BE-001` e `BE-002` farão o alinhamento do parent `3.5.x`, `spring-boot-starter-web`, `spring-boot-starter-validation`, `springdoc-openapi` (`2.8.x`), JWT (`jjwt`) e Testcontainers/Mockito/JUnit.
+1. **Decisão de Versão Registrada (`2026-11-19`)**:
+   - Usuário optou por manter **Spring Boot `4.1.2`** (gerado pelo Initializr) em vez de fazer downgrade para `3.5.x`; `BE-001` concluída.
 2. **Pacote base (`BE-005`)**:
-   - Reorganizar `com.uniflow.api` para a raiz `com.uniflow` com os 15 pacotes de domínio (`auth`, `usuario`, `semestre`, `disciplina`, `aula`, `atividade`, `calendario`, `trabalho`, `grupo`, `arquivo`, `notificacao`, `planejamento`, `assinatura`, `common`, `config`).
-3. **Execução de `.\mvnw.cmd test`**:
-   - `ApiApplicationTests` (`@SpringBootTest`) ainda não possui datasource PostgreSQL nem `application.yml` (`BE-003`, `BE-004`, `BE-006`).
+   - Próxima reorganização moverá/estruturará o monólito modular sob `com.uniflow.{auth,usuario,semestre,disciplina,aula,atividade,calendario,trabalho,grupo,arquivo,notificacao,planejamento,assinatura,common,config}`.
+3. **Execução de `ApiApplicationTests` (`@SpringBootTest`)**:
+   - Continua aguardando datasource PostgreSQL e `application.yml` (`BE-003`, `BE-004`, `BE-006`).
 4. **Regra de processo em 2 etapas**:
-   - Nenhuma tarefa pode ser implementada antes da apresentação do plano técnico e autorização explícita do usuário; módulos funcionais não devem iniciar antes da estrutura inicial (`Épico 1`).
+   - Apresentar plano técnico e aguardar autorização explícita antes de implementar novas tarefas.
 
 ---
 
-## 5. Próximos Passos Recomendados (Épico 1 — Estrutura Inicial)
+## 5. Próximos Passos Recomendados (Desbloqueados Agora no Épico 1)
 
-1. `/executar BE-001` + `/executar BE-002` — Alinhar projeto Maven para Java 21 + **Spring Boot 3.5.x** e configurar dependências completas.
-2. `/executar BE-003` + `/executar BE-004` + `/executar BE-006` — Docker/PostgreSQL, variáveis de ambiente, Flyway e `application.yml` multiambiente.
-3. `/executar BE-005` + `/executar BE-007` + `/executar BE-008` + `/executar BE-009` — Estrutura dos 15 pacotes, tratamento global de exceções com **Problem Details (RFC 7807)** e Bean Validation.
-4. `/executar BE-010` + `/executar BE-011` + `/executar BE-012` — Swagger/OpenAPI, logs estruturados e base de testes JUnit 5 + Mockito.
+1. `/run BE-003` — Configurar PostgreSQL (`compose.yaml`) e variáveis de ambiente (`.env.example`).
+2. `/run BE-005` — Criar estrutura de pacotes por domínio (`com.uniflow.*`).
+3. Na sequência: `/run BE-004` (Flyway) e `/run BE-006` (`application.yml` por ambiente).

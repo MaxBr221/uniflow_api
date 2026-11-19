@@ -1,7 +1,7 @@
 # Backlog Oficial do Backend — UniFlow (`uniflow-backend`)
 
-> **Repositório**: `uniflow-backend` (`c:\uniflow_api\api`) | **Stack**: Java 21, Spring Boot 3.5.x, Maven, PostgreSQL, Spring Data JPA, Flyway
-> **Como executar qualquer item**: use `/executar <ID>` (ex.: `/executar BE-001`, `/executar be-044`). Todo item exige análise prévia + plano técnico + aprovação antes da implementação.
+> **Repositório**: `uniflow-backend` (`c:\uniflow_api\api`) | **Stack**: Java 21, Spring Boot `4.1.2` *(mantido por decisão do usuário)*, Maven, PostgreSQL, Spring Data JPA, Flyway
+> **Como executar qualquer item**: use `/run <ID>` ou `/executar <ID>` (ex.: `/run BE-003`, `/executar be-005`). Todo item exige análise prévia + plano técnico + aprovação antes da implementação.
 
 ## Convenções de Status
 - `[ ] PENDENTE`: Ainda não iniciado.
@@ -36,8 +36,8 @@
 
 | Status | ID | Tarefa | Prioridade | Depende de | Critério de Aceite Principal |
 | :--- | :--- | :--- | :---: | :--- | :--- |
-| `PENDENTE` | `BE-001` | Criar projeto Spring Boot com Maven e Java 21 | Alta | — | `pom.xml` alinhado para **Spring Boot 3.5.x** + Java 21 (`UniflowApplication`), compilando via `.\mvnw.cmd test-compile` |
-| `PENDENTE` | `BE-002` | Configurar dependências do projeto | Alta | `BE-001` | `pom.xml` com Web, JPA, Security, Flyway, PostgreSQL, Bean Validation, Lombok, Springdoc, JWT (`jjwt`) e JUnit/Mockito/Testcontainers |
+| `CONCLUIDO` | `BE-001` | Criar projeto Spring Boot com Maven e Java 21 | Alta | — | Projeto inicial Spring Boot (`4.1.2` mantido por decisão do usuário em `2026-11-19`) + Maven + Java 21 compilando via `.\mvnw.cmd test-compile` |
+| `CONCLUIDO` | `BE-002` | Configurar dependências do projeto | Alta | `BE-001` | `pom.xml` completo com Web MVC, JPA, Security, Flyway, PostgreSQL, Bean Validation, Lombok, Springdoc (`3.2.0`), JWT (`jjwt:0.13.0`) e JUnit/Mockito/Testcontainers (`DependenciesSmokeTest` 2/2 passando) |
 | `PENDENTE` | `BE-003` | Configurar PostgreSQL e variáveis de ambiente | Alta | `BE-002` | `compose.yaml` PostgreSQL + `.env.example` + datasource parametrizado por env vars (sem segredos hardcoded) |
 | `PENDENTE` | `BE-004` | Configurar Flyway | Alta | `BE-003` | `spring.flyway.enabled=true`, `ddl-auto=validate`, `V1__init_baseline.sql` aplicada com sucesso no PostgreSQL |
 | `PENDENTE` | `BE-005` | Criar estrutura de pacotes por domínio | Alta | `BE-001` | Pacotes `com.uniflow.{auth,usuario,semestre,disciplina,aula,atividade,calendario,trabalho,grupo,arquivo,notificacao,planejamento,assinatura,common,config}` estruturados |

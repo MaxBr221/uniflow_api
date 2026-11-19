@@ -8,7 +8,9 @@ Este repositório utiliza **Skills do Antigravity** localizadas em `.agents/skil
 
 | Comando | Skill | O que faz | Exemplo de uso |
 | :--- | :--- | :--- | :--- |
-| `/executar <ID>` | [executar/SKILL.md](file:///c:/uniflow_api/api/.agents/skills/executar/SKILL.md) | Analisa a tarefa `BE-XXX`, verifica dependências/MVP Gate, apresenta o plano técnico e aguarda aprovação. Após aprovado, implementa, valida testes/build/segurança e atualiza `BACKLOG.md`, `STATUS.md`, `RELATORIO.md`, `DATABASE_DESIGN.md` e `API_CONTRACT.md`. | `/executar be-001` ou `/executar be-044` |
+| `/tarefas [filtro]` | [tarefas/SKILL.md](file:///c:/uniflow_api/api/.agents/skills/tarefas/SKILL.md) | Lista todas as tarefas do backlog oficial (`BE-001` a `BE-158`) por épico e status, ou filtra por `pendentes`, `desbloqueadas`, `epico X`, `mvp`, etc. | `/tarefas` ou `/tarefas desbloqueadas` |
+| `/run <ID>` | [run/SKILL.md](file:///c:/uniflow_api/api/.agents/skills/run/SKILL.md) | Analisa a tarefa (aceita `BE-XXX` ou `back-XXX`), verifica dependências/MVP Gate, apresenta o plano técnico para aprovação e, após aprovado, implementa, testa e atualiza os documentos. | `/run back-022` ou `/run BE-001` |
+| `/executar <ID>` | [executar/SKILL.md](file:///c:/uniflow_api/api/.agents/skills/executar/SKILL.md) | Equivalente em português ao `/run <ID>`, com o mesmo fluxo obrigatório de plano técnico + aprovação + execução + atualização documental. | `/executar be-001` ou `/executar back-044` |
 | `/status-projeto` | [status-projeto/SKILL.md](file:///c:/uniflow_api/api/.agents/skills/status-projeto/SKILL.md) | Audita o código real, migrations e `docs/BACKLOG.md`, recalculando métricas e atualizando `docs/STATUS.md`. | `/status-projeto` |
 | `/relatorio-projeto` | [relatorio-projeto/SKILL.md](file:///c:/uniflow_api/api/.agents/skills/relatorio-projeto/SKILL.md) | Verifica compilação/testes atuais e gera ou atualiza o relatório executivo em `docs/RELATORIO.md`. | `/relatorio-projeto` |
 
@@ -18,15 +20,15 @@ Este repositório utiliza **Skills do Antigravity** localizadas em `.agents/skil
 
 | Skill | Arquivo | Finalidade |
 | :--- | :--- | :--- |
-| `uniflow-backend-patterns` | [SKILL.md](file:///c:/uniflow_api/api/.agents/skills/uniflow-backend-patterns/SKILL.md) | Padrões de monólito modular (`controller/service/repository/entity/dto/mapper/enums`), paginação, exceções, UTC e política sem abstrações desnecessárias. |
+| `uniflow-backend-patterns` | [SKILL.md](file:///c:/uniflow_api/api/.agents/skills/uniflow-backend-patterns/SKILL.md) | Padrões de monólito modular (`controller/service/repository/entity/dto/mapper/enums`), paginação, Problem Details RFC 7807, UTC e política sem abstrações desnecessárias. |
 | `uniflow-flyway-postgres` | [SKILL.md](file:///c:/uniflow_api/api/.agents/skills/uniflow-flyway-postgres/SKILL.md) | Padrões de migrations Flyway (`V{n}__*.sql`), constraints PostgreSQL, índices e sincronização de `docs/DATABASE_DESIGN.md`. |
-| `uniflow-security-ownership` | [SKILL.md](file:///c:/uniflow_api/api/.agents/skills/uniflow-security-ownership/SKILL.md) | Regras de Spring Security stateless, JWT, BCrypt, derivação de usuário via `SecurityContext` e isolamento estrita de dados entre usuários (`docs/SECURITY.md`). |
+| `uniflow-security-ownership` | [SKILL.md](file:///c:/uniflow_api/api/.agents/skills/uniflow-security-ownership/SKILL.md) | Regras de Spring Security stateless, JWT, BCrypt, derivação de usuário via `SecurityContext` e isolamento estrito de dados entre usuários (`docs/SECURITY.md`). |
 
 ---
 
 ## 3. Fluxo Recomendado de Trabalho
 
-1. Consultar o estado atual com `/status-projeto` ou lendo [STATUS.md](file:///c:/uniflow_api/api/docs/STATUS.md).
+1. Ver todas as tarefas com `/tarefas` ou consultar o resumo com `/status-projeto`.
 2. Executar a estrutura inicial primeiro (Épico 1: `BE-001`..`BE-012`) antes de iniciar módulos funcionais.
-3. Ao rodar `/executar BE-XXX`, revisar o **Plano Técnico** apresentado e responder autorizando a execução.
+3. Ao rodar `/run <ID>` ou `/executar <ID>`, revisar o **Plano Técnico** apresentado e responder autorizando a execução.
 4. Revisar o resumo final e os registros atualizados em [RELATORIO.md](file:///c:/uniflow_api/api/docs/RELATORIO.md).
