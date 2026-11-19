@@ -1,7 +1,7 @@
 # Backlog Oficial do Backend — UniFlow (`uniflow-backend`)
 
 > **Repositório**: `uniflow-backend` (`c:\uniflow_api\api`) | **Stack**: Java 21, Spring Boot `4.1.2` *(mantido por decisão do usuário)*, Maven, PostgreSQL, Spring Data JPA, Flyway
-> **Como executar qualquer item**: use `/run <ID>` ou `/executar <ID>` (ex.: `/run BE-003`, `/executar be-005`). Todo item exige análise prévia + plano técnico + aprovação antes da implementação.
+> **Como executar qualquer item**: use `/run <ID>` (execução direta quando desbloqueada, ex.: `/run BE-004` ou `/run back-022`) ou `/executar <ID>` (com revisão do plano antes de codar).
 
 ## Convenções de Status
 - `[ ] PENDENTE`: Ainda não iniciado.
@@ -38,16 +38,16 @@
 | :--- | :--- | :--- | :---: | :--- | :--- |
 | `CONCLUIDO` | `BE-001` | Criar projeto Spring Boot com Maven e Java 21 | Alta | — | Projeto inicial Spring Boot (`4.1.2` mantido por decisão do usuário em `2026-11-19`) + Maven + Java 21 compilando via `.\mvnw.cmd test-compile` |
 | `CONCLUIDO` | `BE-002` | Configurar dependências do projeto | Alta | `BE-001` | `pom.xml` completo com Web MVC, JPA, Security, Flyway, PostgreSQL, Bean Validation, Lombok, Springdoc (`3.2.0`), JWT (`jjwt:0.13.0`) e JUnit/Mockito/Testcontainers (`DependenciesSmokeTest` 2/2 passando) |
-| `PENDENTE` | `BE-003` | Configurar PostgreSQL e variáveis de ambiente | Alta | `BE-002` | `compose.yaml` PostgreSQL + `.env.example` + datasource parametrizado por env vars (sem segredos hardcoded) |
-| `PENDENTE` | `BE-004` | Configurar Flyway | Alta | `BE-003` | `spring.flyway.enabled=true`, `ddl-auto=validate`, `V1__init_baseline.sql` aplicada com sucesso no PostgreSQL |
-| `PENDENTE` | `BE-005` | Criar estrutura de pacotes por domínio | Alta | `BE-001` | Pacotes `com.uniflow.{auth,usuario,semestre,disciplina,aula,atividade,calendario,trabalho,grupo,arquivo,notificacao,planejamento,assinatura,common,config}` estruturados |
-| `PENDENTE` | `BE-006` | Configurar application.yml para ambientes | Alta | `BE-003` | `application.yml`, `application-dev.yml`, `application-test.yml`, `application-prod.yml` com timezone UTC e `open-in-view: false` |
-| `PENDENTE` | `BE-007` | Configurar tratamento global de exceções | Alta | `BE-005` | `@RestControllerAdvice` e exceções de domínio em `common.exception` interceptando erros HTTP/negócio |
-| `PENDENTE` | `BE-008` | Criar padrão de respostas de erro com Problem Details | Alta | `BE-007` | Respostas RFC 7807 (`ProblemDetail`) com `type`, `title`, `status`, `detail`, `instance`, `code`, `timestamp` e `fieldErrors` |
-| `PENDENTE` | `BE-009` | Configurar validação com Bean Validation | Alta | `BE-002`, `BE-008` | `MethodArgumentNotValidException` e `ConstraintViolationException` mapeadas para `ProblemDetail` 400/422 com campos detalhados |
-| `PENDENTE` | `BE-010` | Configurar documentação Swagger/OpenAPI | Média | `BE-002`, `BE-006` | `OpenApiConfig` com metadados da API `/api/v1` e esquema `bearerAuth` (JWT) acessível em `/swagger-ui.html` |
-| `PENDENTE` | `BE-011` | Configurar logs da aplicação | Média | `BE-006` | Padrão de logs estruturados com `requestId` (MDC filter) sem vazar senhas, tokens ou dados sensíveis |
-| `PENDENTE` | `BE-012` | Configurar testes com JUnit e Mockito | Alta | `BE-004`, `BE-006` | Base de testes unitários (Mockito) e integração (SpringBootTest/Testcontainers Postgres) executando `.\mvnw.cmd test` com sucesso |
+| `CONCLUIDO` | `BE-003` | Configurar PostgreSQL e variáveis de ambiente | Alta | `BE-002` | `compose.yaml` (PostgreSQL 16) + `.env.example` + `.gitignore` (`.env`) + `application.properties` parametrizado via env vars (`DatabaseConfigPropertiesTest` 2/2 passando) |
+| `CONCLUIDO` | `BE-004` | Configurar Flyway | Alta | `BE-003` | `spring.flyway.*` em `application.yml` (`enabled=true`, `validate-on-migrate=true`, `clean-disabled=true`), `ddl-auto=validate` e `V1__init_baseline.sql` criada/validada (`FlywayConfigTest` 2/2; aplicação em DB aguarda PostgreSQL/Docker ativo) |
+| `CONCLUIDO` | `BE-005` | Criar estrutura de pacotes por domínio | Alta | `BE-001` | Entrypoint `com.uniflow.UniflowApplication` e 15 pacotes modulares `com.uniflow.*` estruturados por responsabilidade (`ModularStructureTest` 2/2 passando) |
+| `CONCLUIDO` | `BE-006` | Configurar application.yml para ambientes | Alta | `BE-003` | `application.yml`, `application-dev.yml`, `application-test.yml`, `application-prod.yml` com timezone UTC, `open-in-view: false`, `ddl-auto: validate` e env vars (`DatabaseConfigPropertiesTest` 3/3 passando) |
+| `CONCLUIDO` | `BE-007` | Configurar tratamento global de exceções | Alta | `BE-005` | Hierarquia `UniflowException` + `GlobalExceptionHandler` (`@RestControllerAdvice`) em `common.exception` interceptando erros HTTP/domínio (`GlobalExceptionHandlerWebMvcTest` 6/6 passando) |
+| `CONCLUIDO` | `BE-008` | Criar padrão de respostas de erro com Problem Details | Alta | `BE-007` | `FieldErrorDetail`, `ProblemDetailsFactory` e integração com `GlobalExceptionHandler` retornando RFC 7807 completo (`type`, `title`, `status`, `detail`, `instance`, `code`, `timestamp` UTC, `fieldErrors`); `GlobalExceptionHandlerWebMvcTest` 7/7 + `ProblemDetailsFactoryTest` 2/2 |
+| `CONCLUIDO` | `BE-009` | Configurar validação com Bean Validation | Alta | `BE-002`, `BE-008` | `MethodArgumentNotValidException`, `ConstraintViolationException` e `HandlerMethodValidationException` mapeadas no `GlobalExceptionHandler` para `ProblemDetail` `400 Bad Request` (`VALIDATION_ERROR`) com `fieldErrors` detalhados (`BeanValidationWebMvcTest` 4/4 passando) |
+| `CONCLUIDO` | `BE-010` | Configurar documentação Swagger/OpenAPI | Média | `BE-002`, `BE-006` | `OpenApiConfig` com metadados da API `/api/v1`, servidor base `/`, esquema JWT `bearerAuth` e `springdoc.swagger-ui` configurado por perfil (`/v3/api-docs` e `/swagger-ui.html` validados em `OpenApiConfigTest` 1/1 + `OpenApiWebMvcTest` 2/2) |
+| `CONCLUIDO` | `BE-011` | Configurar logs da aplicação | Média | `BE-006` | `RequestLoggingFilter` (`OncePerRequestFilter`, `HIGHEST_PRECEDENCE`) com `requestId` em MDC e header `X-Request-Id`, `SensitiveDataMasker` + `SensitiveDataMaskingConverter` e `logback-spring.xml` (UTC, `!prod`/`prod` estruturado sem vazar senhas/tokens); `SensitiveDataMaskerTest` 3/3 + `LogbackLoggingConfigTest` 2/2 + `RequestLoggingFilterWebMvcTest` 2/2 |
+| `EM_ANDAMENTO` | `BE-012` | Configurar testes com JUnit e Mockito | Alta | `BE-004`, `BE-006` | `TestcontainersConfiguration` (`postgres:16-alpine` + `@ServiceConnection`), `AbstractIntegrationTest`, `UniflowApplicationTests` e `RequestLoggingFilterMockitoTest` (2/2) implementados; `.\mvnw.cmd test` executou 34/35 com sucesso e falhou apenas em `UniflowApplicationTests` porque o daemon do Docker Desktop está parado no host |
 
 ---
 

@@ -1,4 +1,4 @@
-package com.uniflow.api;
+package com.uniflow;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

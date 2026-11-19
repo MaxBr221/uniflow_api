@@ -52,7 +52,7 @@ uniflow-backend/ (c:\uniflow_api\api)
 └── docs/                # Documentação viva, backlog, status e relatórios
 ```
 
-*Nota*: Atualmente existe apenas [ApiApplication.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/api/ApiApplication.java) em `com.uniflow.api`, a ser ajustada em `BE-001` / `BE-005`.
+*Estado atual*: Entrypoint principal em [UniflowApplication.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/UniflowApplication.java) (`com.uniflow`), com todos os 15 pacotes modulares e subcamadas estruturados na `BE-005`.
 
 ### Organização Interna de Cada Módulo
 

@@ -2,7 +2,7 @@
 
 > **Última atualização**: `2026-11-19`
 > **Repositório**: `c:\uniflow_api\api` (exclusivo Backend)
-> **Estado Geral**: `EM_ANDAMENTO (Épico 1)` — `BE-001` e `BE-002` concluídas; preparando banco PostgreSQL, Flyway, ambientes e pacotes de domínio.
+> **Estado Geral**: `EM_ANDAMENTO (Épico 1)` — `BE-001` a `BE-011` concluídas (`11 / 12` do Épico 1) e `BE-012` em andamento (`EM_ANDAMENTO`), aguardando inicialização do Docker Desktop para concluir `UniflowApplicationTests` (Testcontainers PostgreSQL) e liberar o Épico 2+.
 
 ---
 
@@ -10,13 +10,13 @@
 
 | Recorte | Concluído | Em Andamento | Pendente | Fora do MVP | Total | % Concluído |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **MVP 1.0 (Épicos 1–8: `BE-001`..`BE-119`)** | 2 | 0 | 117 | 0 | 119 | **1.7%** |
+| **MVP 1.0 (Épicos 1–8: `BE-001`..`BE-119`)** | 11 | 1 | 107 | 0 | 119 | **9.2%** |
 | **Versão 1.1 (Épicos 9–10: `BE-120`..`BE-144`)** | 0 | 0 | 25 | 0 | 25 | **0.0%** |
 | **Versão 2.0 / Futura (Épicos 11–12: `BE-145`..`BE-158`)** | 0 | 0 | 0 | 14 | 14 | **0.0%** |
-| **TOTAL GERAL** | **2** | **0** | **142** | **14** | **158** | **1.3%** |
+| **TOTAL GERAL** | **11** | **1** | **132** | **14** | **158** | **7.0%** |
 
 ```text
-MVP 1.0 (Épicos 1-8)    : [░░░░░░░░░░░░░░░░░░░░]  1.7% (2 / 119)
+MVP 1.0 (Épicos 1-8)    : [██░░░░░░░░░░░░░░░░░░]  9.2% (11 / 119)
 v1.1    (Épicos 9-10)   : [░░░░░░░░░░░░░░░░░░░░]  0.0% (0 / 25)
 v2.0    (Épicos 11-12)  : [░░░░░░░░░░░░░░░░░░░░]  0.0% (0 / 14) - Aguardando validação do MVP
 ```
@@ -27,7 +27,7 @@ v2.0    (Épicos 11-12)  : [░░░░░░░░░░░░░░░░░�
 
 | Épico | Título | Módulo(s) | Versão Alvo | Faixa | Concluídas | Status |
 | :---: | :--- | :--- | :--- | :--- | :---: | :--- |
-| **1** | Configuração e estrutura do projeto | `config`, `common` | `MVP 1.0` | `BE-001`..`BE-012` | 2 / 12 | Em andamento |
+| **1** | Configuração e estrutura do projeto | `config`, `common` | `MVP 1.0` | `BE-001`..`BE-012` | 11 / 12 | Em andamento |
 | **2** | Autenticação e usuários | `MOD-01`, `MOD-02` | `MVP 1.0` | `BE-013`..`BE-031` | 0 / 19 | Não iniciado |
 | **3** | Semestres acadêmicos | `MOD-03` | `MVP 1.0` | `BE-032`..`BE-045` | 0 / 14 | Não iniciado |
 | **4** | Disciplinas | `MOD-04` | `MVP 1.0` | `BE-046`..`BE-058` | 0 / 13 | Não iniciado |
@@ -46,30 +46,24 @@ v2.0    (Épicos 11-12)  : [░░░░░░░░░░░░░░░░░�
 
 Fatos verificados diretamente em `c:\uniflow_api\api` (`2026-11-19`):
 - **Java**: `21.0.9 LTS` ativo no ambiente.
-- **Compilação Maven**: `.\mvnw.cmd test-compile` -> **`BUILD SUCCESS`** (`48.051s`).
-- **Teste executado**: `.\mvnw.cmd test "-Dtest=DependenciesSmokeTest"` -> **`Tests run: 2, Failures: 0, Errors: 0, Skipped: 0`** (`BUILD SUCCESS`).
-- **Spring Boot no `pom.xml`**: `4.1.2` *(mantido a partir do Initializr por decisão do usuário em `2026-11-19`)*, com `spring-boot-starter-data-jpa`, `spring-boot-starter-flyway`, `spring-boot-starter-security`, `spring-boot-starter-validation`, `spring-boot-starter-webmvc`, `flyway-database-postgresql`, `springdoc-openapi-starter-webmvc-ui:3.2.0`, `jjwt` (`0.13.0`), `postgresql`, `lombok`, `spring-boot-starter-*-test`, `spring-boot-testcontainers`, `testcontainers-junit-jupiter`, `testcontainers-postgresql`.
-- **Código Java existente**: [ApiApplication.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/api/ApiApplication.java), [ApiApplicationTests.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/api/ApiApplicationTests.java) e [DependenciesSmokeTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/api/DependenciesSmokeTest.java) no pacote `com.uniflow.api`.
-- **Configuração atual**: apenas [application.properties](file:///c:/uniflow_api/api/src/main/resources/application.properties) (`spring.application.name=api`).
-- **Migrations Flyway**: pasta `src/main/resources/db/migration/` ainda está **vazia** (`0` migrations).
+- **Testes completos executados**: `.\mvnw.cmd test` -> **`Tests run: 35, Failures: 0, Errors: 1, Skipped: 0`** (`BUILD FAILURE` apenas em `UniflowApplicationTests` por ausência do daemon Docker: `Could not find a valid Docker environment`; todas as 12 suítes unitárias/Mockito/WebMvcTest totalizaram **`34 / 34`** passando).
+- **Base JUnit 5 + Mockito + Testcontainers**: [TestcontainersConfiguration.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/TestcontainersConfiguration.java) (`postgres:16-alpine` com `@ServiceConnection`), [AbstractIntegrationTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/AbstractIntegrationTest.java), [UniflowApplicationTests.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/UniflowApplicationTests.java) e [RequestLoggingFilterMockitoTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/common/filter/RequestLoggingFilterMockitoTest.java).
+- **Logs Estruturados e Segurança de Logs**: [RequestLoggingFilter.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/common/filter/RequestLoggingFilter.java) (`requestId` MDC + header `X-Request-Id`), [SensitiveDataMasker.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/common/filter/SensitiveDataMasker.java), [SensitiveDataMaskingConverter.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/common/filter/SensitiveDataMaskingConverter.java) e [logback-spring.xml](file:///c:/uniflow_api/api/src/main/resources/logback-spring.xml) (UTC + mascaramento automático de JWT/senhas + formato estruturado em `prod`).
+- **OpenAPI / Swagger**: [OpenApiConfig.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/config/OpenApiConfig.java) com metadados `/api/v1`, servidor base `/` e esquema `bearerAuth` (JWT), controlado por perfil em [application.yml](file:///c:/uniflow_api/api/src/main/resources/application.yml) (`dev` habilitado, `prod`/`test` protegidos).
+- **Exceções Globais, Problem Details e Bean Validation**: [GlobalExceptionHandler.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/common/exception/GlobalExceptionHandler.java), [ProblemDetailsFactory.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/common/exception/ProblemDetailsFactory.java) e [FieldErrorDetail.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/common/exception/FieldErrorDetail.java) + hierarquia `UniflowException` ativos em `com.uniflow.common.exception`, mapeando exceções HTTP/domínio e Bean Validation (`MethodArgumentNotValidException`, `ConstraintViolationException`, `HandlerMethodValidationException`) para RFC 7807 (`type`, `title`, `status`, `detail`, `instance`, `code`, `timestamp` UTC, `fieldErrors`).
+- **Estrutura Modular**: [UniflowApplication.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/UniflowApplication.java) em `com.uniflow` + 15 pacotes modulares e subcamadas.
+- **Flyway & Config**: [application.yml](file:///c:/uniflow_api/api/src/main/resources/application.yml) (`dev`, `test`, `prod`), [V1__init_baseline.sql](file:///c:/uniflow_api/api/src/main/resources/db/migration/V1__init_baseline.sql), [compose.yaml](file:///c:/uniflow_api/api/compose.yaml), [.env.example](file:///c:/uniflow_api/api/.env.example).
 
 ---
 
 ## 4. Alertas Técnicos e Decisões Pendentes
 
-1. **Decisão de Versão Registrada (`2026-11-19`)**:
-   - Usuário optou por manter **Spring Boot `4.1.2`** (gerado pelo Initializr) em vez de fazer downgrade para `3.5.x`; `BE-001` concluída.
-2. **Pacote base (`BE-005`)**:
-   - Próxima reorganização moverá/estruturará o monólito modular sob `com.uniflow.{auth,usuario,semestre,disciplina,aula,atividade,calendario,trabalho,grupo,arquivo,notificacao,planejamento,assinatura,common,config}`.
-3. **Execução de `ApiApplicationTests` (`@SpringBootTest`)**:
-   - Continua aguardando datasource PostgreSQL e `application.yml` (`BE-003`, `BE-004`, `BE-006`).
-4. **Regra de processo em 2 etapas**:
-   - Apresentar plano técnico e aguardar autorização explícita antes de implementar novas tarefas.
+1. **Docker Desktop parado no host (`BE-012` em andamento)**:
+   - `docker info` falhou (`npipe:////./pipe/dockerDesktopLinuxEngine` indisponível).
+   - Iniciar Docker Desktop e reexecutar `.\mvnw.cmd test` para concluir `UniflowApplicationTests` (`TestcontainersConfiguration` + `V1__init_baseline.sql`) e finalizar o Épico 1.
 
 ---
 
-## 5. Próximos Passos Recomendados (Desbloqueados Agora no Épico 1)
+## 5. Próximos Passos Recomendados (Épico 1)
 
-1. `/run BE-003` — Configurar PostgreSQL (`compose.yaml`) e variáveis de ambiente (`.env.example`).
-2. `/run BE-005` — Criar estrutura de pacotes por domínio (`com.uniflow.*`).
-3. Na sequência: `/run BE-004` (Flyway) e `/run BE-006` (`application.yml` por ambiente).
+1. Iniciar o **Docker Desktop** no host e reexecutar `/run BE-012` (para validar `.\mvnw.cmd test` completo com PostgreSQL Testcontainers e marcar `BE-012` como `CONCLUIDO`).

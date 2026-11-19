@@ -25,8 +25,8 @@
 
 ## Comandos do Agente (`.agents/skills/`)
 - `/tarefas [filtro]` — Lista todas as tarefas do backlog (`BE-001`..`BE-158`) por épico e status (suporta filtros como `pendentes`, `desbloqueadas`, `epico 1`)
-- `/run <ID>` (ex.: `/run back-022`, `/run BE-001`) — Analisa a tarefa, apresenta o plano técnico para aprovação e, após autorizado, executa e atualiza os `.md` de controle
-- `/executar <ID>` (ex.: `/executar be-001`, `/executar be-044`) — Mesmo fluxo do `/run <ID>`
+- `/run <ID>` (ex.: `/run back-022`, `/run BE-004`) — **Executa diretamente** a tarefa desbloqueada (implementa, roda testes e atualiza os `.md`) sem pedir confirmação prévia
+- `/executar <ID>` (ex.: `/executar be-004`, `/executar be-044`) — Apresenta o plano técnico para aprovação antes de implementar e atualizar os `.md` de controle
 - `/status-projeto` — Audita código vs backlog e atualiza `docs/STATUS.md`
 - `/relatorio-projeto` — Atualiza o relatório executivo em `docs/RELATORIO.md`
 

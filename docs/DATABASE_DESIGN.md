@@ -1,7 +1,7 @@
 # Banco de Dados e Migrations Flyway — UniFlow Backend
 
 > **SGBD**: PostgreSQL | **Versionamento**: Flyway (`src/main/resources/db/migration/`)
-> **Estado Atual**: `0` migrations criadas (diretório `db/migration` vazio até a execução de `BE-004`).
+> **Estado Atual**: `1` migration criada (`V1__init_baseline.sql`, pronta para aplicação assim que o PostgreSQL/Docker estiver ativo).
 
 ---
 
@@ -43,7 +43,7 @@ erDiagram
 
 | Versão | Arquivo Planejado | Tabelas / Objetos | Tarefa | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| `V1` | `V1__init_baseline.sql` | Extensões base / baseline inicial | `BE-004` | `PENDENTE` |
+| `V1` | `V1__init_baseline.sql` | Extensões base / baseline inicial (`pgcrypto`) | `BE-004` | `CRIADA (aguarda DB ativo)` |
 | `V2` | `V2__create_usuarios_table.sql` | `usuarios` (`status`), `refresh_tokens` (rotação/revogação) | `BE-015` | `PENDENTE` |
 | `V3` | `V3__create_semestres_table.sql` | `semestres` + índice único parcial `WHERE atual = true` | `BE-034` | `PENDENTE` |
 | `V4` | `V4__create_disciplinas_table.sql` | `disciplinas` | `BE-047` | `PENDENTE` |
