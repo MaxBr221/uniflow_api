@@ -4,19 +4,20 @@ Este documento registra a evolução cronológica, entregas verificadas, métric
 
 ---
 
-## 1. Resumo Executivo Atual (`2026-11-19`)
+## 1. Resumo Executivo Atual (`2026-11-21`)
 
-- **Fase Atual**: Épico 1 em andamento (`BE-001` a `BE-011` concluídas; `BE-012` em andamento aguardando Docker ativo para `UniflowApplicationTests`).
-- **Progresso do MVP 1.0 (Épicos 1–8)**: `11 / 119` tarefas concluídas (`9.2%`), `1` em andamento (`BE-012`).
+- **Fase Atual**: Épico 1 concluído (`12 / 12`) e **Épico 2 (`MOD-01`, `MOD-02`) iniciado** com `BE-014` concluída (`1 / 19`).
+- **Progresso do MVP 1.0 (Épicos 1–8)**: `13 / 119` tarefas concluídas (`10.9%`).
 - **Progresso Versão 1.1 (Épicos 9–10)**: `0 / 25` tarefas concluídas (`0.0%`).
 - **Progresso Versão 2.0 / Futura (Épicos 11–12)**: `0 / 14` tarefas (`FORA_DO_MVP`).
-- **Progresso Geral**: `11 / 158` tarefas concluídas (`7.0%`).
-- **Status do Build**: `.\mvnw.cmd test` -> **`Tests run: 35, Failures: 0, Errors: 1, Skipped: 0`** (`34/34` unitários/Mockito/WebMvcTest passando; `UniflowApplicationTests` falhou por Docker parado no host).
-- **Endpoints implementados**: `0` | **Migrations Flyway criadas**: `1` (`V1__init_baseline.sql`) | **Testes passando**: `34 / 35` (`BeanValidationWebMvcTest` 4/4 + `GlobalExceptionHandlerWebMvcTest` 7/7 + `ProblemDetailsFactoryTest` 2/2 + `LogbackLoggingConfigTest` 2/2 + `RequestLoggingFilterMockitoTest` 2/2 + `RequestLoggingFilterWebMvcTest` 2/2 + `SensitiveDataMaskerTest` 3/3 + `OpenApiConfigTest` 1/1 + `OpenApiWebMvcTest` 2/2 + `DatabaseConfigPropertiesTest` 3/3 + `DependenciesSmokeTest` 2/2 + `FlywayConfigTest` 2/2 + `ModularStructureTest` 2/2; `UniflowApplicationTests` `0/1` por falta de daemon Docker).
+- **Progresso Geral**: `13 / 158` tarefas concluídas (`8.2%`).
+- **Status do Build**: `.\mvnw.cmd test` -> **`Tests run: 37, Failures: 0, Errors: 0, Skipped: 0`** (`BUILD SUCCESS`).
+- **Endpoints implementados**: `0` | **Migrations Flyway criadas**: `1` (`V1__init_baseline.sql`) | **Testes passando**: `37 / 37` (`BeanValidationWebMvcTest` 4/4 + `GlobalExceptionHandlerWebMvcTest` 7/7 + `ProblemDetailsFactoryTest` 2/2 + `LogbackLoggingConfigTest` 2/2 + `RequestLoggingFilterMockitoTest` 2/2 + `RequestLoggingFilterWebMvcTest` 2/2 + `SensitiveDataMaskerTest` 3/3 + `OpenApiConfigTest` 1/1 + `OpenApiWebMvcTest` 2/2 + `DatabaseConfigPropertiesTest` 3/3 + `DependenciesSmokeTest` 2/2 + `FlywayConfigTest` 2/2 + `ModularStructureTest` 2/2 + `StatusUsuarioTest` 2/2 + `UniflowApplicationTests` 1/1 com Testcontainers `PostgreSQL 16.15`).
 
 ### Principais Pontos de Atenção
 1. Mantido **Spring Boot `4.1.2`** (do esqueleto Initializr) por decisão do usuário em `2026-11-19` (`BE-001` concluída).
-2. **Docker Desktop parado no host** (`dockerDesktopLinuxEngine` indisponível): necessário iniciar Docker para concluir `BE-012` (`.\mvnw.cmd test` completo com PostgreSQL Testcontainers) e liberar o Épico 2+.
+2. `UniflowApplicationTests` utiliza Testcontainers (`postgres:16-alpine`), exigindo Docker ativo durante a execução completa de `.\mvnw.cmd test`.
+3. Próximas tarefas desbloqueadas no **Épico 2**: `BE-013` (entidade `Usuario`), `BE-020`, `BE-021`, `BE-017` e `BE-018`.
 
 ---
 
@@ -24,16 +25,37 @@ Este documento registra a evolução cronológica, entregas verificadas, métric
 
 | Métrica | Valor Atual | Meta MVP 1.0 |
 | :--- | :---: | :---: |
-| Tarefas `BE-XXX` concluídas | 11 | 119 (`Épicos 1–8`) |
+| Tarefas `BE-XXX` concluídas | 13 | 119 (`Épicos 1–8`) |
 | Tarefas Versão 1.1 concluídas | 0 | 25 (`Épicos 9–10`, pós-MVP) |
 | Migrations Flyway em `src/main/resources/db/migration/` | 1 (`V1__init_baseline.sql`) | 7 (`V1`..`V7` no MVP 1.0) |
 | Endpoints REST implementados | 0 | Todos os de `MVP 1.0` em [API_CONTRACT.md](file:///c:/uniflow_api/api/docs/API_CONTRACT.md) |
 | Compilação (`.\mvnw.cmd test-compile`) | ✅ Passando | ✅ Passando |
-| Suíte de testes (`.\mvnw.cmd test`) | ⚠️ `34/35` passando (`UniflowApplicationTests` aguarda Docker ativo no host) | ✅ 100% Passando |
+| Suíte de testes (`.\mvnw.cmd test`) | ✅ `37/37` passando (`PostgreSQL 16` via Testcontainers) | ✅ 100% Passando |
 
 ---
 
 ## 3. Histórico Cronológico de Execuções
+
+### [2026-11-21] — Execução `BE-014`: Criar enum de status do usuário
+- **Épico / Versão**: `Épico 2` | `MVP 1.0`
+- **O que foi implementado**:
+  - Criado o enum [StatusUsuario.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/usuario/enums/StatusUsuario.java) em `com.uniflow.usuario.enums` com os valores `ATIVO`, `INATIVO`, `BLOQUEADO` e `EXCLUIDO`, além do método de domínio `permiteAutenticacao()`.
+  - Criada a suíte unitária [StatusUsuarioTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/usuario/enums/StatusUsuarioTest.java) validando todas as constantes e a política de autenticação ativa.
+- **Arquivos criados**: [StatusUsuario.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/usuario/enums/StatusUsuario.java), [StatusUsuarioTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/usuario/enums/StatusUsuarioTest.java)
+- **Arquivos modificados**: [BACKLOG.md](file:///c:/uniflow_api/api/docs/BACKLOG.md), [STATUS.md](file:///c:/uniflow_api/api/docs/STATUS.md), [RELATORIO.md](file:///c:/uniflow_api/api/docs/RELATORIO.md)
+- **Verificação**:
+  - `.\mvnw.cmd test` -> **`Tests run: 37, Failures: 0, Errors: 0, Skipped: 0`** (`BUILD SUCCESS`, incluindo `StatusUsuarioTest` `2/2` e `UniflowApplicationTests` `1/1` com Testcontainers PostgreSQL `16.15`)
+- **Pendências identificadas**: **`BE-013`** (*Criar entidade Usuario*) desbloqueada.
+
+### [2026-11-20] — Conclusão `BE-012`: Configurar testes com JUnit e Mockito (Épico 1 concluído)
+- **Épico / Versão**: `Épico 1` | `MVP 1.0`
+- **O que foi implementado e validado**:
+  - Com o Docker Desktop ativo no host, reexecutada a suíte completa `.\mvnw.cmd test` sobre a infraestrutura criada em `BE-012`: [TestcontainersConfiguration.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/TestcontainersConfiguration.java) (`postgres:16-alpine` com `@ServiceConnection`), [AbstractIntegrationTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/AbstractIntegrationTest.java), [UniflowApplicationTests.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/UniflowApplicationTests.java) e [RequestLoggingFilterMockitoTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/common/filter/RequestLoggingFilterMockitoTest.java).
+  - Container PostgreSQL `16.15` inicializado com sucesso, baseline Flyway `V1__init_baseline.sql` aplicada (versão `v1`), extensão `pgcrypto` validada e `EntityManagerFactory` inicializado com `hibernate.ddl-auto=validate`.
+- **Arquivos modificados**: [BACKLOG.md](file:///c:/uniflow_api/api/docs/BACKLOG.md), [STATUS.md](file:///c:/uniflow_api/api/docs/STATUS.md), [RELATORIO.md](file:///c:/uniflow_api/api/docs/RELATORIO.md)
+- **Verificação**:
+  - `.\mvnw.cmd test` -> **`Tests run: 35, Failures: 0, Errors: 0, Skipped: 0`** (`BUILD SUCCESS`)
+- **Pendências identificadas**: **Épico 1 concluído (`12 / 12`)**. Épico 2 (`MOD-01`, `MOD-02`) desbloqueado (`BE-014`, `BE-017`, `BE-018`, `BE-020`, `BE-021`).
 
 ### [2026-11-19] — Execução parcial `BE-012` (`EM_ANDAMENTO`): Configurar testes com JUnit e Mockito
 - **Épico / Versão**: `Épico 1` | `MVP 1.0`

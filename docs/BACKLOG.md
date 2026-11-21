@@ -47,7 +47,7 @@
 | `CONCLUIDO` | `BE-009` | Configurar validação com Bean Validation | Alta | `BE-002`, `BE-008` | `MethodArgumentNotValidException`, `ConstraintViolationException` e `HandlerMethodValidationException` mapeadas no `GlobalExceptionHandler` para `ProblemDetail` `400 Bad Request` (`VALIDATION_ERROR`) com `fieldErrors` detalhados (`BeanValidationWebMvcTest` 4/4 passando) |
 | `CONCLUIDO` | `BE-010` | Configurar documentação Swagger/OpenAPI | Média | `BE-002`, `BE-006` | `OpenApiConfig` com metadados da API `/api/v1`, servidor base `/`, esquema JWT `bearerAuth` e `springdoc.swagger-ui` configurado por perfil (`/v3/api-docs` e `/swagger-ui.html` validados em `OpenApiConfigTest` 1/1 + `OpenApiWebMvcTest` 2/2) |
 | `CONCLUIDO` | `BE-011` | Configurar logs da aplicação | Média | `BE-006` | `RequestLoggingFilter` (`OncePerRequestFilter`, `HIGHEST_PRECEDENCE`) com `requestId` em MDC e header `X-Request-Id`, `SensitiveDataMasker` + `SensitiveDataMaskingConverter` e `logback-spring.xml` (UTC, `!prod`/`prod` estruturado sem vazar senhas/tokens); `SensitiveDataMaskerTest` 3/3 + `LogbackLoggingConfigTest` 2/2 + `RequestLoggingFilterWebMvcTest` 2/2 |
-| `EM_ANDAMENTO` | `BE-012` | Configurar testes com JUnit e Mockito | Alta | `BE-004`, `BE-006` | `TestcontainersConfiguration` (`postgres:16-alpine` + `@ServiceConnection`), `AbstractIntegrationTest`, `UniflowApplicationTests` e `RequestLoggingFilterMockitoTest` (2/2) implementados; `.\mvnw.cmd test` executou 34/35 com sucesso e falhou apenas em `UniflowApplicationTests` porque o daemon do Docker Desktop está parado no host |
+| `CONCLUIDO` | `BE-012` | Configurar testes com JUnit e Mockito | Alta | `BE-004`, `BE-006` | `TestcontainersConfiguration` (`postgres:16-alpine` + `@ServiceConnection`), `AbstractIntegrationTest`, `UniflowApplicationTests` (`PostgreSQL 16.15` + Flyway `V1` + Hibernate `validate`) e `RequestLoggingFilterMockitoTest` (2/2); `.\mvnw.cmd test` completo com `35/35` passando (`BUILD SUCCESS`) |
 
 ---
 
@@ -56,7 +56,7 @@
 | Status | ID | Tarefa | Prioridade | Depende de | Critério de Aceite Principal |
 | :--- | :--- | :--- | :---: | :--- | :--- |
 | `PENDENTE` | `BE-013` | Criar entidade Usuario | Alta | `BE-005`, `BE-014` | Entidade JPA `Usuario` em `usuario.entity` (`id UUID`, `nome`, `email`, `senhaHash`, `status`, auditoria UTC) |
-| `PENDENTE` | `BE-014` | Criar enum de status do usuário | Alta | `BE-005` | Enum `StatusUsuario` (`ATIVO`, `INATIVO`, `BLOQUEADO`, `EXCLUIDO`) em `usuario.enums` |
+| `CONCLUIDO` | `BE-014` | Criar enum de status do usuário | Alta | `BE-005` | Enum `StatusUsuario` (`ATIVO`, `INATIVO`, `BLOQUEADO`, `EXCLUIDO`) em `usuario.enums` com regra `permiteAutenticacao()` (`StatusUsuarioTest` 2/2 e `.\mvnw.cmd test` 37/37 passando) |
 | `PENDENTE` | `BE-015` | Criar migration da tabela usuario | Alta | `BE-004`, `BE-013` | `V2__create_usuarios_table.sql` (incluindo `usuarios` e `refresh_tokens`) validada pelo Hibernate (`validate`) |
 | `PENDENTE` | `BE-016` | Criar UsuarioRepository | Alta | `BE-013`, `BE-015` | `UsuarioRepository` com buscas por `email` (case-insensitive) e `existsByEmailIgnoreCase` |
 | `PENDENTE` | `BE-017` | Criar DTO de cadastro | Alta | `BE-009` | Record `RegisterRequest` e `AuthUserResponse` com Bean Validation (nome, e-mail válido, senha forte) |
