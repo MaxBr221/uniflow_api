@@ -4,20 +4,20 @@ Este documento registra a evolução cronológica, entregas verificadas, métric
 
 ---
 
-## 1. Resumo Executivo Atual (`2026-11-21`)
+## 1. Resumo Executivo Atual (`2026-11-22`)
 
-- **Fase Atual**: Épico 1 concluído (`12 / 12`) e **Épico 2 (`MOD-01`, `MOD-02`) em andamento** (`BE-014` e `BE-013` concluídas — `2 / 19`).
-- **Progresso do MVP 1.0 (Épicos 1–8)**: `14 / 119` tarefas concluídas (`11.8%`).
+- **Fase Atual**: Épico 1 concluído (`12 / 12`) e **Épico 2 (`MOD-01`, `MOD-02`) em andamento** (`BE-013`, `BE-014`, `BE-015`, `BE-016` e `BE-017` concluídas — `5 / 19`).
+- **Progresso do MVP 1.0 (Épicos 1–8)**: `17 / 119` tarefas concluídas (`14.3%`).
 - **Progresso Versão 1.1 (Épicos 9–10)**: `0 / 25` tarefas concluídas (`0.0%`).
 - **Progresso Versão 2.0 / Futura (Épicos 11–12)**: `0 / 14` tarefas (`FORA_DO_MVP`).
-- **Progresso Geral**: `14 / 158` tarefas concluídas (`8.9%`).
-- **Status do Build**: `.\mvnw.cmd test "-Dtest=...UsuarioTest"` (`15` suítes unitárias/WebMvc) -> **`Tests run: 39, Failures: 0, Errors: 0, Skipped: 0`** (`BUILD SUCCESS`). *(`UniflowApplicationTests` aguarda `V2__create_usuarios_table.sql` em `BE-015` para `ddl-auto: validate`)*.
-- **Endpoints implementados**: `0` | **Migrations Flyway criadas**: `1` (`V1__init_baseline.sql`) | **Testes passando**: `39` (`BeanValidationWebMvcTest` 4/4 + `GlobalExceptionHandlerWebMvcTest` 7/7 + `ProblemDetailsFactoryTest` 2/2 + `LogbackLoggingConfigTest` 2/2 + `RequestLoggingFilterMockitoTest` 2/2 + `RequestLoggingFilterWebMvcTest` 2/2 + `SensitiveDataMaskerTest` 3/3 + `OpenApiConfigTest` 1/1 + `OpenApiWebMvcTest` 2/2 + `DatabaseConfigPropertiesTest` 3/3 + `DependenciesSmokeTest` 2/2 + `FlywayConfigTest` 2/2 + `ModularStructureTest` 2/2 + `UsuarioTest` 3/3 + `StatusUsuarioTest` 2/2).
+- **Progresso Geral**: `17 / 158` tarefas concluídas (`10.8%`).
+- **Status do Build**: `.\mvnw.cmd clean test` -> **`Tests run: 72, Failures: 0, Errors: 0, Skipped: 0`** (`BUILD SUCCESS`).
+- **Endpoints implementados**: `0` | **Migrations Flyway criadas**: `2` (`V1__init_baseline.sql`, `V2__create_usuarios_table.sql`) | **Testes passando**: `72 / 72` (`RegisterDtoWebMvcTest` 2/2 + `RegisterRequestValidationTest` 25/25 + `BeanValidationWebMvcTest` 4/4 + `GlobalExceptionHandlerWebMvcTest` 7/7 + `ProblemDetailsFactoryTest` 2/2 + `LogbackLoggingConfigTest` 2/2 + `RequestLoggingFilterMockitoTest` 2/2 + `RequestLoggingFilterWebMvcTest` 2/2 + `SensitiveDataMaskerTest` 3/3 + `OpenApiConfigTest` 1/1 + `OpenApiWebMvcTest` 2/2 + `DatabaseConfigPropertiesTest` 3/3 + `DependenciesSmokeTest` 2/2 + `FlywayConfigTest` 2/2 + `ModularStructureTest` 2/2 + `UsuarioTest` 3/3 + `StatusUsuarioTest` 2/2 + `UniflowApplicationTests` 1/1 + `UsuarioRepositoryIntegrationTest` 5/5 com Testcontainers `PostgreSQL 16.15` validando `V2`).
 
 ### Principais Pontos de Atenção
 1. Mantido **Spring Boot `4.1.2`** (do esqueleto Initializr) por decisão do usuário em `2026-11-19` (`BE-001` concluída).
-2. Com a entidade `Usuario` mapeada (`BE-013`), `UniflowApplicationTests` (`ddl-auto: validate`) aguarda a criação de `V2__create_usuarios_table.sql` em `BE-015`.
-3. Próximas tarefas desbloqueadas no **Épico 2**: `BE-015` (migration `V2`), `BE-020`, `BE-021`, `BE-017` e `BE-018`.
+2. `V2__create_usuarios_table.sql`, `UsuarioRepository` e DTOs de cadastro (`RegisterRequest`, `AuthUserResponse`) validados com `PostgreSQL 16.15`, Bean Validation e Problem Details RFC 7807.
+3. Próximas tarefas desbloqueadas no **Épico 2**: `BE-020`, `BE-021` e `BE-018` (`BE-019` e `BE-023` aguardam `BE-020`).
 
 ---
 
@@ -25,16 +25,64 @@ Este documento registra a evolução cronológica, entregas verificadas, métric
 
 | Métrica | Valor Atual | Meta MVP 1.0 |
 | :--- | :---: | :---: |
-| Tarefas `BE-XXX` concluídas | 14 | 119 (`Épicos 1–8`) |
+| Tarefas `BE-XXX` concluídas | 17 | 119 (`Épicos 1–8`) |
 | Tarefas Versão 1.1 concluídas | 0 | 25 (`Épicos 9–10`, pós-MVP) |
-| Migrations Flyway em `src/main/resources/db/migration/` | 1 (`V1__init_baseline.sql`) | 7 (`V1`..`V7` no MVP 1.0) |
+| Migrations Flyway em `src/main/resources/db/migration/` | 2 (`V1`..`V2`) | 7 (`V1`..`V7` no MVP 1.0) |
 | Endpoints REST implementados | 0 | Todos os de `MVP 1.0` em [API_CONTRACT.md](file:///c:/uniflow_api/api/docs/API_CONTRACT.md) |
 | Compilação (`.\mvnw.cmd test-compile`) | ✅ Passando | ✅ Passando |
-| Suíte de testes (`.\mvnw.cmd test`) | ⚠️ Filtrada (`39/39` unitários/WebMvcTest passando; `UniflowApplicationTests` aguarda `V2` em `BE-015`) | ✅ 100% Passando |
+| Suíte de testes (`.\mvnw.cmd clean test`) | ✅ `72/72` passando (`PostgreSQL 16` via Testcontainers) | ✅ 100% Passando |
 
 ---
 
 ## 3. Histórico Cronológico de Execuções
+
+### [2026-11-22] — Conclusão `BE-017`: Criar DTO de cadastro
+- **Épico / Versão**: `Épico 2` | `MVP 1.0`
+- **O que foi implementado**:
+  - Criado o record [RegisterRequest.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/auth/dto/RegisterRequest.java) em `com.uniflow.auth.dto` com `@Schema`, Bean Validation (`nome` entre `2` e `150` caracteres com `@NotBlank`, `email` até `255` caracteres com `@NotBlank` + `@Email`, `senha` forte entre `8` e `72` caracteres com maiúscula, minúscula, número, caractere especial e sem espaços via `@Pattern`), normalização no construtor compacto (`nome.trim()`, `email.trim().toLowerCase()`) e `toString()` mascarando `senha` (`***REDACTED***`).
+  - Criado o record [AuthUserResponse.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/auth/dto/AuthUserResponse.java) em `com.uniflow.auth.dto` expondo apenas `id`, `nome`, `email`, `status` (`StatusUsuario`) e timestamps UTC (`createdAt`, `updatedAt`), sem expor `senhaHash`.
+  - Criadas as suítes [RegisterRequestValidationTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/auth/dto/RegisterRequestValidationTest.java) (`25/25`) e [RegisterDtoWebMvcTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/auth/dto/RegisterDtoWebMvcTest.java) (`2/2` via `@WebMvcTest` + `GlobalExceptionHandler` RFC 7807).
+- **Arquivos criados**: [RegisterRequest.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/auth/dto/RegisterRequest.java), [AuthUserResponse.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/auth/dto/AuthUserResponse.java), [RegisterRequestValidationTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/auth/dto/RegisterRequestValidationTest.java), [RegisterDtoWebMvcTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/auth/dto/RegisterDtoWebMvcTest.java)
+- **Arquivos modificados**: [BACKLOG.md](file:///c:/uniflow_api/api/docs/BACKLOG.md), [STATUS.md](file:///c:/uniflow_api/api/docs/STATUS.md), [RELATORIO.md](file:///c:/uniflow_api/api/docs/RELATORIO.md)
+- **Verificação**:
+  - `.\mvnw.cmd clean test` -> **`Tests run: 72, Failures: 0, Errors: 0, Skipped: 0`** (`BUILD SUCCESS`, incluindo `RegisterRequestValidationTest` `25/25`, `RegisterDtoWebMvcTest` `2/2`, `UniflowApplicationTests` `1/1` e `UsuarioRepositoryIntegrationTest` `5/5` em `PostgreSQL 16.15`)
+- **Pendências identificadas**: **`BE-020`**, **`BE-021`** e **`BE-018`** desbloqueadas (`BE-019` aguarda `BE-020`).
+
+### [2026-11-22] — Conclusão `BE-016`: Criar UsuarioRepository
+- **Épico / Versão**: `Épico 2` | `MVP 1.0`
+- **O que foi implementado**:
+  - Criada a interface [UsuarioRepository.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/usuario/repository/UsuarioRepository.java) em `com.uniflow.usuario.repository` estendendo `JpaRepository<Usuario, UUID>`, com consultas case-insensitive `findByEmailIgnoreCase(String email)` e `existsByEmailIgnoreCase(String email)`.
+  - Criada a suíte de integração [UsuarioRepositoryIntegrationTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/usuario/repository/UsuarioRepositoryIntegrationTest.java) (`@DataJpaTest`, `PostgreSQL 16.15` via Testcontainers, `FlywayAutoConfiguration` e `hibernate.ddl-auto=validate`) validando persistência e recarga com e-mail normalizado, `findByEmailIgnoreCase` em maiúsculas/mistas/inexistente, `existsByEmailIgnoreCase`, atualização de `status` preservando `created_at` e violação da constraint `uk_usuarios_email` para e-mail duplicado variando apenas caixa (`DataIntegrityViolationException`).
+- **Arquivos criados**: [UsuarioRepository.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/usuario/repository/UsuarioRepository.java), [UsuarioRepositoryIntegrationTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/usuario/repository/UsuarioRepositoryIntegrationTest.java)
+- **Arquivos modificados**: [BACKLOG.md](file:///c:/uniflow_api/api/docs/BACKLOG.md), [STATUS.md](file:///c:/uniflow_api/api/docs/STATUS.md), [RELATORIO.md](file:///c:/uniflow_api/api/docs/RELATORIO.md)
+- **Verificação**:
+  - `.\mvnw.cmd clean test` -> **`Tests run: 45, Failures: 0, Errors: 0, Skipped: 0`** (`BUILD SUCCESS`, incluindo `UsuarioRepositoryIntegrationTest` `5/5` em `PostgreSQL 16.15`)
+- **Pendências identificadas**: **`BE-020`**, **`BE-021`**, **`BE-017`** e **`BE-018`** desbloqueadas (`BE-019` e `BE-023` aguardam `BE-020` / `BE-017`).
+
+### [2026-11-22] — Conclusão `BE-015`: Criar migration da tabela usuario
+- **Épico / Versão**: `Épico 2` | `MVP 1.0`
+- **O que foi implementado e validado**:
+  - Com o Docker Desktop ativo (`DOCKER_EXIT=0`), validada em PostgreSQL `16.15` Testcontainers a migration [V2__create_usuarios_table.sql](file:///c:/uniflow_api/api/src/main/resources/db/migration/V2__create_usuarios_table.sql) (`usuarios` + `refresh_tokens`) junto com a entidade `Usuario` via `hibernate.ddl-auto=validate`.
+  - Atualizada [UniflowApplicationTests.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/UniflowApplicationTests.java) verificando ausência de migrations pendentes (`version >= 2`), extensão `pgcrypto` e existência das tabelas `usuarios` e `refresh_tokens`.
+- **Arquivos criados**: [V2__create_usuarios_table.sql](file:///c:/uniflow_api/api/src/main/resources/db/migration/V2__create_usuarios_table.sql)
+- **Arquivos modificados**: [UniflowApplicationTests.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/UniflowApplicationTests.java), [FlywayConfigTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/FlywayConfigTest.java), [DATABASE_DESIGN.md](file:///c:/uniflow_api/api/docs/DATABASE_DESIGN.md), [BACKLOG.md](file:///c:/uniflow_api/api/docs/BACKLOG.md), [STATUS.md](file:///c:/uniflow_api/api/docs/STATUS.md), [RELATORIO.md](file:///c:/uniflow_api/api/docs/RELATORIO.md)
+- **Verificação**:
+  - `.\mvnw.cmd clean test` -> **`Tests run: 40, Failures: 0, Errors: 0, Skipped: 0`** (`BUILD SUCCESS`, com `V1` e `V2` aplicadas em `PostgreSQL 16.15` e `EntityManagerFactory` validado)
+- **Pendências identificadas**: **`BE-016`** (*Criar UsuarioRepository*) desbloqueada.
+
+### [2026-11-22] — Execução parcial `BE-015` (`EM_ANDAMENTO`): Criar migration da tabela usuario
+- **Épico / Versão**: `Épico 2` | `MVP 1.0`
+- **O que foi implementado**:
+  - Criada a migration [V2__create_usuarios_table.sql](file:///c:/uniflow_api/api/src/main/resources/db/migration/V2__create_usuarios_table.sql) definindo:
+    - tabela `usuarios` (`id` UUID PK, `nome` `VARCHAR(150)`, `email` `VARCHAR(255)` com `uk_usuarios_email` e `ck_usuarios_email_lowercase`, `senha_hash` `VARCHAR(255)`, `status` `VARCHAR(40)` com `ck_usuarios_status`, `created_at`/`updated_at` em `TIMESTAMPTZ` e `idx_usuarios_status`);
+    - tabela `refresh_tokens` (`id` UUID PK, `usuario_id` FK `fk_refresh_tokens_usuario` `ON DELETE CASCADE`, `token_hash` único `uk_refresh_tokens_token_hash`, `expires_at`/`revoked_at`/`created_at` em `TIMESTAMPTZ`, `revoked` BOOLEAN, `replaced_by_token_id` auto-referenciada `fk_refresh_tokens_replaced_by` e índices de consulta).
+  - Atualizado [FlywayConfigTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/FlywayConfigTest.java) validando presença e constraints principais de `V2__create_usuarios_table.sql`.
+  - Atualizado [DATABASE_DESIGN.md](file:///c:/uniflow_api/api/docs/DATABASE_DESIGN.md) documentando `V2`, constraints e índices.
+- **Arquivos criados**: [V2__create_usuarios_table.sql](file:///c:/uniflow_api/api/src/main/resources/db/migration/V2__create_usuarios_table.sql)
+- **Arquivos modificados**: [FlywayConfigTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/FlywayConfigTest.java), [DATABASE_DESIGN.md](file:///c:/uniflow_api/api/docs/DATABASE_DESIGN.md), [BACKLOG.md](file:///c:/uniflow_api/api/docs/BACKLOG.md), [STATUS.md](file:///c:/uniflow_api/api/docs/STATUS.md), [RELATORIO.md](file:///c:/uniflow_api/api/docs/RELATORIO.md)
+- **Verificação**:
+  - `.\mvnw.cmd test` -> `Tests run: 40, Failures: 0, Errors: 1, Skipped: 0` (`39/39` unitários/Mockito/WebMvcTest passando; `UniflowApplicationTests` falhou com `Could not find a valid Docker environment`).
+- **Pendências identificadas**: Tarefa mantida como `EM_ANDAMENTO`. Iniciar Docker Desktop no host e reexecutar `/run BE-015` (ou `.\mvnw.cmd test`) para validar `V2__create_usuarios_table.sql` com Hibernate `validate` no PostgreSQL Testcontainers e marcar `BE-015` como `CONCLUIDO`.
 
 ### [2026-11-21] — Execução `BE-013`: Criar entidade Usuario
 - **Épico / Versão**: `Épico 2` | `MVP 1.0`

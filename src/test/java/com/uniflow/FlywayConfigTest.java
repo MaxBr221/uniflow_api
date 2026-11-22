@@ -69,5 +69,17 @@ class FlywayConfigTest {
 		assertThat(v1).exists();
 		assertThat(Files.readString(v1)).contains("CREATE EXTENSION IF NOT EXISTS pgcrypto;");
 		assertThat(new ClassPathResource("db/migration/V1__init_baseline.sql").exists()).isTrue();
+
+		Path v2 = migrationDir.resolve("V2__create_usuarios_table.sql");
+		assertThat(v2).exists();
+		assertThat(new ClassPathResource("db/migration/V2__create_usuarios_table.sql").exists()).isTrue();
+		assertThat(Files.readString(v2))
+				.contains("CREATE TABLE usuarios")
+				.contains("CONSTRAINT uk_usuarios_email UNIQUE (email)")
+				.contains("CONSTRAINT ck_usuarios_status CHECK")
+				.contains("TIMESTAMPTZ")
+				.contains("CREATE TABLE refresh_tokens")
+				.contains("CONSTRAINT uk_refresh_tokens_token_hash UNIQUE (token_hash)")
+				.contains("CONSTRAINT fk_refresh_tokens_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios (id)");
 	}
 }

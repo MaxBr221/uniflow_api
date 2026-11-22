@@ -1,7 +1,7 @@
 # Banco de Dados e Migrations Flyway — UniFlow Backend
 
 > **SGBD**: PostgreSQL | **Versionamento**: Flyway (`src/main/resources/db/migration/`)
-> **Estado Atual**: `1` migration criada (`V1__init_baseline.sql`, pronta para aplicação assim que o PostgreSQL/Docker estiver ativo).
+> **Estado Atual**: `2` migrations criadas e aplicadas/validadas em `PostgreSQL 16.15` via Testcontainers + Hibernate `validate` (`V1__init_baseline.sql` e `V2__create_usuarios_table.sql`).
 
 ---
 
@@ -43,8 +43,8 @@ erDiagram
 
 | Versão | Arquivo Planejado | Tabelas / Objetos | Tarefa | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| `V1` | `V1__init_baseline.sql` | Extensões base / baseline inicial (`pgcrypto`) | `BE-004` | `CRIADA (aguarda DB ativo)` |
-| `V2` | `V2__create_usuarios_table.sql` | `usuarios` (`status`), `refresh_tokens` (rotação/revogação) | `BE-015` | `PENDENTE` |
+| `V1` | `V1__init_baseline.sql` | Extensões base / baseline inicial (`pgcrypto`) | `BE-004` | `CONCLUIDA` |
+| `V2` | `V2__create_usuarios_table.sql` | `usuarios` (`uk_usuarios_email`, `ck_usuarios_status`), `refresh_tokens` (`uk_refresh_tokens_token_hash`, `fk_refresh_tokens_usuario`, `fk_refresh_tokens_replaced_by`) | `BE-015` | `CONCLUIDA (PostgreSQL + Hibernate validate)` |
 | `V3` | `V3__create_semestres_table.sql` | `semestres` + índice único parcial `WHERE atual = true` | `BE-034` | `PENDENTE` |
 | `V4` | `V4__create_disciplinas_table.sql` | `disciplinas` | `BE-047` | `PENDENTE` |
 | `V5` | `V5__create_aulas_table.sql` | `aulas` + `CHECK (hora_inicial < hora_final)` | `BE-060` | `PENDENTE` |
@@ -59,8 +59,8 @@ erDiagram
 
 ## 4. Constraints e Índices Críticos
 
-1. **`usuarios`**: `UNIQUE (email)` com e-mail normalizado em lowercase; `status` em `StatusUsuario`.
-2. **`refresh_tokens`**: `token_hash` único, referência a `usuario_id`, `expires_at`, `revoked`, `replaced_by_token_id` (suporte à rotação segura `BE-024`).
+1. **`usuarios`**: `PRIMARY KEY (id)` UUID, `UNIQUE (email)` (`uk_usuarios_email`) + `ck_usuarios_email_lowercase` (`email = LOWER(email)`), `status VARCHAR(40)` com `ck_usuarios_status` (`ATIVO`, `INATIVO`, `BLOQUEADO`, `EXCLUIDO`), `created_at`/`updated_at` em `TIMESTAMPTZ` e índice `idx_usuarios_status`.
+2. **`refresh_tokens`**: `PRIMARY KEY (id)` UUID, `token_hash` único (`uk_refresh_tokens_token_hash`), `fk_refresh_tokens_usuario` (`ON DELETE CASCADE`), `expires_at` (`TIMESTAMPTZ`), `revoked`, `revoked_at`, `replaced_by_token_id` (`fk_refresh_tokens_replaced_by`, `ON DELETE SET NULL`) e índices `idx_refresh_tokens_usuario_id`, `idx_refresh_tokens_expires_at`, `idx_refresh_tokens_usuario_revoked` (suporte à rotação segura `BE-024`).
 3. **`semestres`**:
    - `CONSTRAINT ck_semestres_datas CHECK (data_inicial < data_final)`
    - `CREATE UNIQUE INDEX uq_semestre_atual_usuario ON semestres (usuario_id) WHERE atual = true`
