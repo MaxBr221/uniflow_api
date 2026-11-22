@@ -2,7 +2,7 @@
 
 > **Última atualização**: `2026-11-21`
 > **Repositório**: `c:\uniflow_api\api` (exclusivo Backend)
-> **Estado Geral**: `ÉPICO 2 EM ANDAMENTO` — Épico 1 (`12 / 12`) e `BE-014` concluídas (`1 / 19` do Épico 2); suíte completa validada (`.\mvnw.cmd test` `37/37`). Próximas desbloqueadas: `BE-013` (entidade `Usuario`), `BE-020` (BCrypt), `BE-021` (Spring Security), `BE-017` e `BE-018` (DTOs de auth).
+> **Estado Geral**: `ÉPICO 2 EM ANDAMENTO` — Épico 1 (`12 / 12`) e `BE-014`/`BE-013` concluídas (`2 / 19` do Épico 2). Próximas desbloqueadas: `BE-015` (migration `V2__create_usuarios_table.sql` — necessária para validar `Usuario` em `UniflowApplicationTests`), `BE-020` (BCrypt), `BE-021` (Spring Security), `BE-017` e `BE-018` (DTOs de auth).
 
 ---
 
@@ -10,13 +10,13 @@
 
 | Recorte | Concluído | Em Andamento | Pendente | Fora do MVP | Total | % Concluído |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **MVP 1.0 (Épicos 1–8: `BE-001`..`BE-119`)** | 13 | 0 | 106 | 0 | 119 | **10.9%** |
+| **MVP 1.0 (Épicos 1–8: `BE-001`..`BE-119`)** | 14 | 0 | 105 | 0 | 119 | **11.8%** |
 | **Versão 1.1 (Épicos 9–10: `BE-120`..`BE-144`)** | 0 | 0 | 25 | 0 | 25 | **0.0%** |
 | **Versão 2.0 / Futura (Épicos 11–12: `BE-145`..`BE-158`)** | 0 | 0 | 0 | 14 | 14 | **0.0%** |
-| **TOTAL GERAL** | **13** | **0** | **131** | **14** | **158** | **8.2%** |
+| **TOTAL GERAL** | **14** | **0** | **130** | **14** | **158** | **8.9%** |
 
 ```text
-MVP 1.0 (Épicos 1-8)    : [██░░░░░░░░░░░░░░░░░░] 10.9% (13 / 119)
+MVP 1.0 (Épicos 1-8)    : [██░░░░░░░░░░░░░░░░░░] 11.8% (14 / 119)
 v1.1    (Épicos 9-10)   : [░░░░░░░░░░░░░░░░░░░░]  0.0% (0 / 25)
 v2.0    (Épicos 11-12)  : [░░░░░░░░░░░░░░░░░░░░]  0.0% (0 / 14) - Aguardando validação do MVP
 ```
@@ -28,7 +28,7 @@ v2.0    (Épicos 11-12)  : [░░░░░░░░░░░░░░░░░�
 | Épico | Título | Módulo(s) | Versão Alvo | Faixa | Concluídas | Status |
 | :---: | :--- | :--- | :--- | :--- | :---: | :--- |
 | **1** | Configuração e estrutura do projeto | `config`, `common` | `MVP 1.0` | `BE-001`..`BE-012` | 12 / 12 | Concluído |
-| **2** | Autenticação e usuários | `MOD-01`, `MOD-02` | `MVP 1.0` | `BE-013`..`BE-031` | 1 / 19 | Em andamento |
+| **2** | Autenticação e usuários | `MOD-01`, `MOD-02` | `MVP 1.0` | `BE-013`..`BE-031` | 2 / 19 | Em andamento |
 | **3** | Semestres acadêmicos | `MOD-03` | `MVP 1.0` | `BE-032`..`BE-045` | 0 / 14 | Não iniciado |
 | **4** | Disciplinas | `MOD-04` | `MVP 1.0` | `BE-046`..`BE-058` | 0 / 13 | Não iniciado |
 | **5** | Aulas e horários | `MOD-05` | `MVP 1.0` | `BE-059`..`BE-070` | 0 / 12 | Não iniciado |
@@ -47,8 +47,8 @@ v2.0    (Épicos 11-12)  : [░░░░░░░░░░░░░░░░░�
 Fatos verificados diretamente em `c:\uniflow_api\api` (`2026-11-21`):
 - **Java**: `21.0.9 LTS` ativo no ambiente.
 - **Docker**: Docker Desktop ativo no host (`DOCKER_EXIT=0`).
-- **Suíte completa executada**: `.\mvnw.cmd test` -> **`Tests run: 37, Failures: 0, Errors: 0, Skipped: 0`** (`BUILD SUCCESS`), incluindo `StatusUsuarioTest` (`2/2`) e `UniflowApplicationTests` com PostgreSQL `16.15` via Testcontainers (`postgres:16-alpine`), Flyway `V1__init_baseline.sql` aplicada e Hibernate `validate`.
-- **Domínio Usuário (`MOD-01`)**: Enum [StatusUsuario.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/usuario/enums/StatusUsuario.java) (`ATIVO`, `INATIVO`, `BLOQUEADO`, `EXCLUIDO`) em `com.uniflow.usuario.enums`.
+- **Suíte filtrada executada**: `.\mvnw.cmd test "-Dtest=DependenciesSmokeTest,DatabaseConfigPropertiesTest,FlywayConfigTest,ModularStructureTest,GlobalExceptionHandlerWebMvcTest,ProblemDetailsFactoryTest,BeanValidationWebMvcTest,OpenApiConfigTest,OpenApiWebMvcTest,SensitiveDataMaskerTest,LogbackLoggingConfigTest,RequestLoggingFilterWebMvcTest,RequestLoggingFilterMockitoTest,StatusUsuarioTest,UsuarioTest"` -> **`Tests run: 39, Failures: 0, Errors: 0, Skipped: 0`** (`BUILD SUCCESS`). `UniflowApplicationTests` (`ddl-auto: validate`) aguarda a criação da tabela `usuarios` via `BE-015`.
+- **Domínio Usuário (`MOD-01`)**: Entidade [Usuario.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/usuario/entity/Usuario.java) (`usuarios`, `id UUID`, `nome`, `email` normalizado + `uk_usuarios_email`, `senha_hash`, `status`, `created_at`/`updated_at` UTC) e enum [StatusUsuario.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/usuario/enums/StatusUsuario.java) (`ATIVO`, `INATIVO`, `BLOQUEADO`, `EXCLUIDO`).
 - **Base JUnit 5 + Mockito + Testcontainers**: [TestcontainersConfiguration.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/TestcontainersConfiguration.java) (`postgres:16-alpine` com `@ServiceConnection`), [AbstractIntegrationTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/AbstractIntegrationTest.java), [UniflowApplicationTests.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/UniflowApplicationTests.java) e [RequestLoggingFilterMockitoTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/common/filter/RequestLoggingFilterMockitoTest.java).
 - **Logs Estruturados e Segurança de Logs**: [RequestLoggingFilter.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/common/filter/RequestLoggingFilter.java) (`requestId` MDC + header `X-Request-Id`), [SensitiveDataMasker.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/common/filter/SensitiveDataMasker.java), [SensitiveDataMaskingConverter.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/common/filter/SensitiveDataMaskingConverter.java) e [logback-spring.xml](file:///c:/uniflow_api/api/src/main/resources/logback-spring.xml) (UTC + mascaramento automático de JWT/senhas + formato estruturado em `prod`).
 - **OpenAPI / Swagger**: [OpenApiConfig.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/config/OpenApiConfig.java) com metadados `/api/v1`, servidor base `/` e esquema `bearerAuth` (JWT), controlado por perfil em [application.yml](file:///c:/uniflow_api/api/src/main/resources/application.yml) (`dev` habilitado, `prod`/`test` protegidos).
@@ -62,14 +62,16 @@ Fatos verificados diretamente em `c:\uniflow_api\api` (`2026-11-21`):
 
 1. **Docker Desktop para testes de integração**:
    - Manter Docker ativo ao rodar `.\mvnw.cmd test` completo (Testcontainers `postgres:16-alpine`).
-2. **Spring Boot `4.1.2`**:
+2. **Validação de Schema (`BE-015`)**:
+   - Com a entidade `Usuario` criada em `BE-013`, a próxima etapa natural é executar `/run BE-015` para criar `V2__create_usuarios_table.sql` e revalidar `UniflowApplicationTests` com `hibernate.ddl-auto=validate`.
+3. **Spring Boot `4.1.2`**:
    - Versão do Spring Boot Starter Parent mantida conforme decisão registrada em `BE-001`.
 
 ---
 
 ## 5. Próximos Passos Recomendados (Épico 2 Desbloqueado)
 
-1. `/run BE-013` — Criar entidade `Usuario` *(desbloqueada após `BE-014`)*.
+1. `/run BE-015` — Criar migration `V2__create_usuarios_table.sql` *(desbloqueada após `BE-013`; restabelece validação Hibernate completa)*.
 2. `/run BE-020` — Implementar criptografia de senha com BCrypt (`PasswordEncoder`).
 3. `/run BE-021` — Configurar Spring Security (`SecurityFilterChain` stateless + handlers `401`/`403` RFC 7807).
 4. `/run BE-017` e `/run BE-018` — Criar DTOs de cadastro (`RegisterRequest`, `AuthUserResponse`) e login (`LoginRequest`, `AuthTokenResponse`).

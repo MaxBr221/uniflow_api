@@ -55,7 +55,7 @@
 
 | Status | ID | Tarefa | Prioridade | Depende de | Critério de Aceite Principal |
 | :--- | :--- | :--- | :---: | :--- | :--- |
-| `PENDENTE` | `BE-013` | Criar entidade Usuario | Alta | `BE-005`, `BE-014` | Entidade JPA `Usuario` em `usuario.entity` (`id UUID`, `nome`, `email`, `senhaHash`, `status`, auditoria UTC) |
+| `CONCLUIDO` | `BE-013` | Criar entidade Usuario | Alta | `BE-005`, `BE-014` | Entidade JPA `Usuario` em `usuario.entity` (`id UUID`, `nome`, `email` normalizado lowercase + unique `uk_usuarios_email`, `senhaHash` omitido do `toString`, `status` `VARCHAR(40)`, auditoria UTC via `@PrePersist`/`@PreUpdate`; `UsuarioTest` 3/3 e suíte filtrada 39/39 passando) |
 | `CONCLUIDO` | `BE-014` | Criar enum de status do usuário | Alta | `BE-005` | Enum `StatusUsuario` (`ATIVO`, `INATIVO`, `BLOQUEADO`, `EXCLUIDO`) em `usuario.enums` com regra `permiteAutenticacao()` (`StatusUsuarioTest` 2/2 e `.\mvnw.cmd test` 37/37 passando) |
 | `PENDENTE` | `BE-015` | Criar migration da tabela usuario | Alta | `BE-004`, `BE-013` | `V2__create_usuarios_table.sql` (incluindo `usuarios` e `refresh_tokens`) validada pelo Hibernate (`validate`) |
 | `PENDENTE` | `BE-016` | Criar UsuarioRepository | Alta | `BE-013`, `BE-015` | `UsuarioRepository` com buscas por `email` (case-insensitive) e `existsByEmailIgnoreCase` |

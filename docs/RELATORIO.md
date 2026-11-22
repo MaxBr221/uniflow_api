@@ -6,18 +6,18 @@ Este documento registra a evolução cronológica, entregas verificadas, métric
 
 ## 1. Resumo Executivo Atual (`2026-11-21`)
 
-- **Fase Atual**: Épico 1 concluído (`12 / 12`) e **Épico 2 (`MOD-01`, `MOD-02`) iniciado** com `BE-014` concluída (`1 / 19`).
-- **Progresso do MVP 1.0 (Épicos 1–8)**: `13 / 119` tarefas concluídas (`10.9%`).
+- **Fase Atual**: Épico 1 concluído (`12 / 12`) e **Épico 2 (`MOD-01`, `MOD-02`) em andamento** (`BE-014` e `BE-013` concluídas — `2 / 19`).
+- **Progresso do MVP 1.0 (Épicos 1–8)**: `14 / 119` tarefas concluídas (`11.8%`).
 - **Progresso Versão 1.1 (Épicos 9–10)**: `0 / 25` tarefas concluídas (`0.0%`).
 - **Progresso Versão 2.0 / Futura (Épicos 11–12)**: `0 / 14` tarefas (`FORA_DO_MVP`).
-- **Progresso Geral**: `13 / 158` tarefas concluídas (`8.2%`).
-- **Status do Build**: `.\mvnw.cmd test` -> **`Tests run: 37, Failures: 0, Errors: 0, Skipped: 0`** (`BUILD SUCCESS`).
-- **Endpoints implementados**: `0` | **Migrations Flyway criadas**: `1` (`V1__init_baseline.sql`) | **Testes passando**: `37 / 37` (`BeanValidationWebMvcTest` 4/4 + `GlobalExceptionHandlerWebMvcTest` 7/7 + `ProblemDetailsFactoryTest` 2/2 + `LogbackLoggingConfigTest` 2/2 + `RequestLoggingFilterMockitoTest` 2/2 + `RequestLoggingFilterWebMvcTest` 2/2 + `SensitiveDataMaskerTest` 3/3 + `OpenApiConfigTest` 1/1 + `OpenApiWebMvcTest` 2/2 + `DatabaseConfigPropertiesTest` 3/3 + `DependenciesSmokeTest` 2/2 + `FlywayConfigTest` 2/2 + `ModularStructureTest` 2/2 + `StatusUsuarioTest` 2/2 + `UniflowApplicationTests` 1/1 com Testcontainers `PostgreSQL 16.15`).
+- **Progresso Geral**: `14 / 158` tarefas concluídas (`8.9%`).
+- **Status do Build**: `.\mvnw.cmd test "-Dtest=...UsuarioTest"` (`15` suítes unitárias/WebMvc) -> **`Tests run: 39, Failures: 0, Errors: 0, Skipped: 0`** (`BUILD SUCCESS`). *(`UniflowApplicationTests` aguarda `V2__create_usuarios_table.sql` em `BE-015` para `ddl-auto: validate`)*.
+- **Endpoints implementados**: `0` | **Migrations Flyway criadas**: `1` (`V1__init_baseline.sql`) | **Testes passando**: `39` (`BeanValidationWebMvcTest` 4/4 + `GlobalExceptionHandlerWebMvcTest` 7/7 + `ProblemDetailsFactoryTest` 2/2 + `LogbackLoggingConfigTest` 2/2 + `RequestLoggingFilterMockitoTest` 2/2 + `RequestLoggingFilterWebMvcTest` 2/2 + `SensitiveDataMaskerTest` 3/3 + `OpenApiConfigTest` 1/1 + `OpenApiWebMvcTest` 2/2 + `DatabaseConfigPropertiesTest` 3/3 + `DependenciesSmokeTest` 2/2 + `FlywayConfigTest` 2/2 + `ModularStructureTest` 2/2 + `UsuarioTest` 3/3 + `StatusUsuarioTest` 2/2).
 
 ### Principais Pontos de Atenção
 1. Mantido **Spring Boot `4.1.2`** (do esqueleto Initializr) por decisão do usuário em `2026-11-19` (`BE-001` concluída).
-2. `UniflowApplicationTests` utiliza Testcontainers (`postgres:16-alpine`), exigindo Docker ativo durante a execução completa de `.\mvnw.cmd test`.
-3. Próximas tarefas desbloqueadas no **Épico 2**: `BE-013` (entidade `Usuario`), `BE-020`, `BE-021`, `BE-017` e `BE-018`.
+2. Com a entidade `Usuario` mapeada (`BE-013`), `UniflowApplicationTests` (`ddl-auto: validate`) aguarda a criação de `V2__create_usuarios_table.sql` em `BE-015`.
+3. Próximas tarefas desbloqueadas no **Épico 2**: `BE-015` (migration `V2`), `BE-020`, `BE-021`, `BE-017` e `BE-018`.
 
 ---
 
@@ -25,16 +25,27 @@ Este documento registra a evolução cronológica, entregas verificadas, métric
 
 | Métrica | Valor Atual | Meta MVP 1.0 |
 | :--- | :---: | :---: |
-| Tarefas `BE-XXX` concluídas | 13 | 119 (`Épicos 1–8`) |
+| Tarefas `BE-XXX` concluídas | 14 | 119 (`Épicos 1–8`) |
 | Tarefas Versão 1.1 concluídas | 0 | 25 (`Épicos 9–10`, pós-MVP) |
 | Migrations Flyway em `src/main/resources/db/migration/` | 1 (`V1__init_baseline.sql`) | 7 (`V1`..`V7` no MVP 1.0) |
 | Endpoints REST implementados | 0 | Todos os de `MVP 1.0` em [API_CONTRACT.md](file:///c:/uniflow_api/api/docs/API_CONTRACT.md) |
 | Compilação (`.\mvnw.cmd test-compile`) | ✅ Passando | ✅ Passando |
-| Suíte de testes (`.\mvnw.cmd test`) | ✅ `37/37` passando (`PostgreSQL 16` via Testcontainers) | ✅ 100% Passando |
+| Suíte de testes (`.\mvnw.cmd test`) | ⚠️ Filtrada (`39/39` unitários/WebMvcTest passando; `UniflowApplicationTests` aguarda `V2` em `BE-015`) | ✅ 100% Passando |
 
 ---
 
 ## 3. Histórico Cronológico de Execuções
+
+### [2026-11-21] — Execução `BE-013`: Criar entidade Usuario
+- **Épico / Versão**: `Épico 2` | `MVP 1.0`
+- **O que foi implementado**:
+  - Criada a entidade JPA [Usuario.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/usuario/entity/Usuario.java) em `com.uniflow.usuario.entity` mapeada para a tabela `usuarios` (`uk_usuarios_email`) com `id UUID` (`GenerationType.UUID`), `nome`, `email` normalizado em lowercase (`trim`), `senhaHash` (`senha_hash`, omitido do `toString()`), `status` (`StatusUsuario` como `VARCHAR(40)`) e timestamps UTC `createdAt`/`updatedAt` via `@PrePersist`/`@PreUpdate`.
+  - Criada a suíte unitária [UsuarioTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/usuario/entity/UsuarioTest.java) validando normalização, callbacks de auditoria UTC, ausência de vazamento de `senhaHash` e metadados JPA.
+- **Arquivos criados**: [Usuario.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/usuario/entity/Usuario.java), [UsuarioTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/usuario/entity/UsuarioTest.java)
+- **Arquivos modificados**: [BACKLOG.md](file:///c:/uniflow_api/api/docs/BACKLOG.md), [STATUS.md](file:///c:/uniflow_api/api/docs/STATUS.md), [RELATORIO.md](file:///c:/uniflow_api/api/docs/RELATORIO.md)
+- **Verificação**:
+  - `.\mvnw.cmd test "-Dtest=DependenciesSmokeTest,DatabaseConfigPropertiesTest,FlywayConfigTest,ModularStructureTest,GlobalExceptionHandlerWebMvcTest,ProblemDetailsFactoryTest,BeanValidationWebMvcTest,OpenApiConfigTest,OpenApiWebMvcTest,SensitiveDataMaskerTest,LogbackLoggingConfigTest,RequestLoggingFilterWebMvcTest,RequestLoggingFilterMockitoTest,StatusUsuarioTest,UsuarioTest"` -> **`Tests run: 39, Failures: 0, Errors: 0, Skipped: 0`** (`BUILD SUCCESS`; `UniflowApplicationTests` excluída do filtro até a criação de `V2__create_usuarios_table.sql` em `BE-015`).
+- **Pendências identificadas**: **`BE-015`** (*Criar migration da tabela usuario*) desbloqueada — executar em seguida para validar `usuarios` com Hibernate `ddl-auto=validate` no PostgreSQL Testcontainers.
 
 ### [2026-11-21] — Execução `BE-014`: Criar enum de status do usuário
 - **Épico / Versão**: `Épico 2` | `MVP 1.0`
