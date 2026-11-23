@@ -4,20 +4,20 @@ Este documento registra a evolução cronológica, entregas verificadas, métric
 
 ---
 
-## 1. Resumo Executivo Atual (`2026-11-22`)
+## 1. Resumo Executivo Atual (`2026-11-23`)
 
-- **Fase Atual**: Épico 1 concluído (`12 / 12`) e **Épico 2 (`MOD-01`, `MOD-02`) em andamento** (`BE-013`, `BE-014`, `BE-015`, `BE-016` e `BE-017` concluídas — `5 / 19`).
-- **Progresso do MVP 1.0 (Épicos 1–8)**: `17 / 119` tarefas concluídas (`14.3%`).
+- **Fase Atual**: Épico 1 concluído (`12 / 12`) e **Épico 2 (`MOD-01`, `MOD-02`) em andamento** (`BE-013`..`BE-018` concluídas — `6 / 19`).
+- **Progresso do MVP 1.0 (Épicos 1–8)**: `18 / 119` tarefas concluídas (`15.1%`).
 - **Progresso Versão 1.1 (Épicos 9–10)**: `0 / 25` tarefas concluídas (`0.0%`).
 - **Progresso Versão 2.0 / Futura (Épicos 11–12)**: `0 / 14` tarefas (`FORA_DO_MVP`).
-- **Progresso Geral**: `17 / 158` tarefas concluídas (`10.8%`).
-- **Status do Build**: `.\mvnw.cmd clean test` -> **`Tests run: 72, Failures: 0, Errors: 0, Skipped: 0`** (`BUILD SUCCESS`).
-- **Endpoints implementados**: `0` | **Migrations Flyway criadas**: `2` (`V1__init_baseline.sql`, `V2__create_usuarios_table.sql`) | **Testes passando**: `72 / 72` (`RegisterDtoWebMvcTest` 2/2 + `RegisterRequestValidationTest` 25/25 + `BeanValidationWebMvcTest` 4/4 + `GlobalExceptionHandlerWebMvcTest` 7/7 + `ProblemDetailsFactoryTest` 2/2 + `LogbackLoggingConfigTest` 2/2 + `RequestLoggingFilterMockitoTest` 2/2 + `RequestLoggingFilterWebMvcTest` 2/2 + `SensitiveDataMaskerTest` 3/3 + `OpenApiConfigTest` 1/1 + `OpenApiWebMvcTest` 2/2 + `DatabaseConfigPropertiesTest` 3/3 + `DependenciesSmokeTest` 2/2 + `FlywayConfigTest` 2/2 + `ModularStructureTest` 2/2 + `UsuarioTest` 3/3 + `StatusUsuarioTest` 2/2 + `UniflowApplicationTests` 1/1 + `UsuarioRepositoryIntegrationTest` 5/5 com Testcontainers `PostgreSQL 16.15` validando `V2`).
+- **Progresso Geral**: `18 / 158` tarefas concluídas (`11.4%`).
+- **Status do Build**: `.\mvnw.cmd clean test` -> **`Tests run: 87, Failures: 0, Errors: 0, Skipped: 0`** (`BUILD SUCCESS`).
+- **Endpoints implementados**: `0` | **Migrations Flyway criadas**: `2` (`V1__init_baseline.sql`, `V2__create_usuarios_table.sql`) | **Testes passando**: `87 / 87` (`LoginDtoWebMvcTest` 2/2 + `LoginRequestValidationTest` 13/13 + `RegisterDtoWebMvcTest` 2/2 + `RegisterRequestValidationTest` 25/25 + `BeanValidationWebMvcTest` 4/4 + `GlobalExceptionHandlerWebMvcTest` 7/7 + `ProblemDetailsFactoryTest` 2/2 + `LogbackLoggingConfigTest` 2/2 + `RequestLoggingFilterMockitoTest` 2/2 + `RequestLoggingFilterWebMvcTest` 2/2 + `SensitiveDataMaskerTest` 3/3 + `OpenApiConfigTest` 1/1 + `OpenApiWebMvcTest` 2/2 + `DatabaseConfigPropertiesTest` 3/3 + `DependenciesSmokeTest` 2/2 + `FlywayConfigTest` 2/2 + `ModularStructureTest` 2/2 + `UsuarioTest` 3/3 + `StatusUsuarioTest` 2/2 + `UniflowApplicationTests` 1/1 + `UsuarioRepositoryIntegrationTest` 5/5 com Testcontainers `PostgreSQL 16.15` validando `V2`).
 
 ### Principais Pontos de Atenção
 1. Mantido **Spring Boot `4.1.2`** (do esqueleto Initializr) por decisão do usuário em `2026-11-19` (`BE-001` concluída).
-2. `V2__create_usuarios_table.sql`, `UsuarioRepository` e DTOs de cadastro (`RegisterRequest`, `AuthUserResponse`) validados com `PostgreSQL 16.15`, Bean Validation e Problem Details RFC 7807.
-3. Próximas tarefas desbloqueadas no **Épico 2**: `BE-020`, `BE-021` e `BE-018` (`BE-019` e `BE-023` aguardam `BE-020`).
+2. `V2__create_usuarios_table.sql`, `UsuarioRepository` e DTOs de cadastro/login (`RegisterRequest`, `AuthUserResponse`, `LoginRequest`, `AuthTokenResponse`) validados com `PostgreSQL 16.15`, Bean Validation e Problem Details RFC 7807.
+3. Próximas tarefas desbloqueadas no **Épico 2**: `BE-020` e `BE-021` (`BE-019` e `BE-023` aguardam `BE-020`).
 
 ---
 
@@ -25,16 +25,28 @@ Este documento registra a evolução cronológica, entregas verificadas, métric
 
 | Métrica | Valor Atual | Meta MVP 1.0 |
 | :--- | :---: | :---: |
-| Tarefas `BE-XXX` concluídas | 17 | 119 (`Épicos 1–8`) |
+| Tarefas `BE-XXX` concluídas | 18 | 119 (`Épicos 1–8`) |
 | Tarefas Versão 1.1 concluídas | 0 | 25 (`Épicos 9–10`, pós-MVP) |
 | Migrations Flyway em `src/main/resources/db/migration/` | 2 (`V1`..`V2`) | 7 (`V1`..`V7` no MVP 1.0) |
 | Endpoints REST implementados | 0 | Todos os de `MVP 1.0` em [API_CONTRACT.md](file:///c:/uniflow_api/api/docs/API_CONTRACT.md) |
 | Compilação (`.\mvnw.cmd test-compile`) | ✅ Passando | ✅ Passando |
-| Suíte de testes (`.\mvnw.cmd clean test`) | ✅ `72/72` passando (`PostgreSQL 16` via Testcontainers) | ✅ 100% Passando |
+| Suíte de testes (`.\mvnw.cmd clean test`) | ✅ `87/87` passando (`PostgreSQL 16` via Testcontainers) | ✅ 100% Passando |
 
 ---
 
 ## 3. Histórico Cronológico de Execuções
+
+### [2026-11-23] — Conclusão `BE-018`: Criar DTO de login
+- **Épico / Versão**: `Épico 2` | `MVP 1.0`
+- **O que foi implementado**:
+  - Criado o record [LoginRequest.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/auth/dto/LoginRequest.java) em `com.uniflow.auth.dto` com `@Schema`, Bean Validation (`email` obrigatório/válido até `255` caracteres e `senha` obrigatória até `72` caracteres), normalização de `email` (`trim().toLowerCase()`) sem alterar `senha` e `toString()` mascarando `senha` (`***REDACTED***`).
+  - Criado o record [AuthTokenResponse.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/auth/dto/AuthTokenResponse.java) em `com.uniflow.auth.dto` contendo `accessToken`, `refreshToken`, `expiresIn` (em segundos), `tokenType` (`Bearer`) e `usuario` ([AuthUserResponse](file:///c:/uniflow_api/api/src/main/java/com/uniflow/auth/dto/AuthUserResponse.java)), fábrica estática `bearer(...)` e `toString()` mascarando `accessToken` e `refreshToken` (`***REDACTED***`).
+  - Criadas as suítes [LoginRequestValidationTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/auth/dto/LoginRequestValidationTest.java) (`13/13`) e [LoginDtoWebMvcTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/auth/dto/LoginDtoWebMvcTest.java) (`2/2` via `@WebMvcTest` + `GlobalExceptionHandler` RFC 7807).
+- **Arquivos criados**: [LoginRequest.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/auth/dto/LoginRequest.java), [AuthTokenResponse.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/auth/dto/AuthTokenResponse.java), [LoginRequestValidationTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/auth/dto/LoginRequestValidationTest.java), [LoginDtoWebMvcTest.java](file:///c:/uniflow_api/api/src/test/java/com/uniflow/auth/dto/LoginDtoWebMvcTest.java)
+- **Arquivos modificados**: [BACKLOG.md](file:///c:/uniflow_api/api/docs/BACKLOG.md), [STATUS.md](file:///c:/uniflow_api/api/docs/STATUS.md), [RELATORIO.md](file:///c:/uniflow_api/api/docs/RELATORIO.md)
+- **Verificação**:
+  - `.\mvnw.cmd clean test` -> **`Tests run: 87, Failures: 0, Errors: 0, Skipped: 0`** (`BUILD SUCCESS`, incluindo `LoginRequestValidationTest` `13/13`, `LoginDtoWebMvcTest` `2/2`, `UniflowApplicationTests` `1/1` e `UsuarioRepositoryIntegrationTest` `5/5` em `PostgreSQL 16.15`)
+- **Pendências identificadas**: **`BE-020`** e **`BE-021`** desbloqueadas (`BE-019` e `BE-023` aguardam `BE-020`).
 
 ### [2026-11-22] — Conclusão `BE-017`: Criar DTO de cadastro
 - **Épico / Versão**: `Épico 2` | `MVP 1.0`
