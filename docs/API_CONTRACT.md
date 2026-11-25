@@ -48,12 +48,12 @@
 | Método | Rota | Acesso | Descrição | Tarefa(s) | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | `POST` | `/api/v1/auth/register` | Público (`permitAll`) | Cadastro de estudante (`201 Created`, `AuthUserResponse`, conflito `409`) | `BE-019`, `BE-021` | `IMPLEMENTADO` |
-| `POST` | `/api/v1/auth/login` | Público (`permitAll`) | Login emitindo access token JWT (`refreshToken` com rotação em `BE-024`) | `BE-023`, `BE-024` | `PARCIAL (accessToken implementado)` |
-| `POST` | `/api/v1/auth/refresh` | Público (token) | Renovação de sessão com rotação do refresh token | `BE-024`, `BE-025` | `PLANEJADO` |
-| `POST` | `/api/v1/auth/logout` | Autenticado | Logout e revogação da sessão | `BE-026` | `PLANEJADO` |
-| `GET` | `/api/v1/auth/me` | Autenticado | Dados do usuário autenticado | `BE-027` | `PLANEJADO` |
-| `PATCH` | `/api/v1/auth/password` | Autenticado | Alteração de senha | `BE-029` | `PLANEJADO` |
-| `GET` / `PATCH` | `/api/v1/usuarios/me` | Autenticado | Consultar e atualizar perfil | `BE-027`, `BE-028` | `PLANEJADO` |
+| `POST` | `/api/v1/auth/login` | Público (`permitAll`) | Login emitindo access token JWT e refresh token opaco com rotação persistida (`AuthTokenResponse`) | `BE-023`, `BE-024` | `IMPLEMENTADO` |
+| `POST` | `/api/v1/auth/refresh` | Público (`permitAll` + token) | Renovação de sessão rotacionando refresh token, emitindo novo JWT e bloqueando reutilização (`RefreshTokenRequest` -> `AuthTokenResponse`) | `BE-024`, `BE-025` | `IMPLEMENTADO` |
+| `POST` | `/api/v1/auth/logout` | Autenticado | Logout (`204 No Content`) revogando refresh token informado (com ownership) ou todas as sessões ativas do usuário (`LogoutRequest` opcional) | `BE-026` | `IMPLEMENTADO` |
+| `GET` | `/api/v1/auth/me` | Autenticado | Dados públicos do usuário autenticado extraído exclusivamente do `SecurityContext` (`AuthUserResponse`) | `BE-027` | `IMPLEMENTADO` |
+| `PATCH` | `/api/v1/auth/password` | Autenticado | Alteração de senha (`ChangePasswordRequest`: `senhaAtual`, `novaSenha`) com validação BCrypt da senha atual (`422`), bloqueio de senha igual (`422`), novo hash BCrypt e revogação de refresh tokens (`204 No Content`) | `BE-029` | `IMPLEMENTADO` |
+| `GET` / `PATCH` | `/api/v1/usuarios/me` | Autenticado | Consultar (`GET`) e atualizar parcialmente dados pessoais permitidos (`nome`, `email`) do perfil autenticado (`UpdateProfileRequest` -> `UsuarioResponse`, conflito `409`) | `BE-027`, `BE-028` | `IMPLEMENTADO` |
 
 ### Épico 3 — Semestres Acadêmicos (`MVP 1.0`)
 | Método | Rota | Descrição | Tarefa(s) | Status |

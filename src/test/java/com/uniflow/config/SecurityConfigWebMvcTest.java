@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.matchesRegex;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -90,6 +91,12 @@ class SecurityConfigWebMvcTest {
 	void shouldProtectAuthMeLogoutPasswordAndSwaggerDocsInTestProfile() throws Exception {
 		mockMvc.perform(get("/api/v1/auth/me")).andExpect(status().isUnauthorized());
 		mockMvc.perform(post("/api/v1/auth/logout")).andExpect(status().isUnauthorized());
+		mockMvc.perform(patch("/api/v1/auth/password")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("{\"senhaAtual\":\"UniFlow@2026\",\"novaSenha\":\"UniFlow@2027\"}"))
+				.andExpect(status().isUnauthorized())
+				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+				.andExpect(jsonPath("$.code").value("AUTHENTICATION_FAILED"));
 		mockMvc.perform(get("/v3/api-docs")).andExpect(status().isUnauthorized());
 		mockMvc.perform(get("/swagger-ui.html")).andExpect(status().isUnauthorized());
 	}

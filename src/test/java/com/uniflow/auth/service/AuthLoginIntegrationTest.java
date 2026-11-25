@@ -2,6 +2,8 @@ package com.uniflow.auth.service;
 
 import com.uniflow.AbstractIntegrationTest;
 import com.uniflow.auth.dto.AuthTokenResponse;
+import com.uniflow.auth.entity.RefreshToken;
+import com.uniflow.auth.repository.RefreshTokenRepository;
 import com.uniflow.usuario.entity.Usuario;
 import com.uniflow.usuario.enums.StatusUsuario;
 import com.uniflow.usuario.repository.UsuarioRepository;
@@ -40,6 +42,9 @@ class AuthLoginIntegrationTest extends AbstractIntegrationTest {
 	private JwtService jwtService;
 
 	@Autowired
+	private RefreshTokenRepository refreshTokenRepository;
+
+	@Autowired
 	private ObjectMapper objectMapper;
 
 	@BeforeEach
@@ -75,6 +80,7 @@ class AuthLoginIntegrationTest extends AbstractIntegrationTest {
 				.andExpect(status().isOk())
 				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.accessToken").isNotEmpty())
+				.andExpect(jsonPath("$.refreshToken").isNotEmpty())
 				.andExpect(jsonPath("$.expiresIn").value(900))
 				.andExpect(jsonPath("$.tokenType").value("Bearer"))
 				.andExpect(jsonPath("$.usuario.email").value("beatriz.mendes@uniflow.edu"))
@@ -95,6 +101,17 @@ class AuthLoginIntegrationTest extends AbstractIntegrationTest {
 		assertThat(claims.getIssuedAt()).isNotNull();
 		assertThat(claims.getExpiration()).isAfter(claims.getIssuedAt());
 		assertThat(claims.get(JwtService.CLAIM_EMAIL, String.class)).isEqualTo("beatriz.mendes@uniflow.edu");
+
+		assertThat(tokenResponse.refreshToken()).startsWith(RefreshTokenService.TOKEN_PREFIX);
+		RefreshToken persistedRefresh = refreshTokenRepository
+				.findByTokenHash(RefreshTokenService.hashToken(tokenResponse.refreshToken()))
+				.orElseThrow();
+		assertThat(persistedRefresh.isRevoked()).isFalse();
+		assertThat(persistedRefresh.getReplacedByTokenId()).isNull();
+		assertThat(persistedRefresh.getExpiresAt()).isAfter(persistedRefresh.getCreatedAt());
+		assertThat(persistedRefresh.getTokenHash()).hasSize(64);
+		assertThat(persistedRefresh.getTokenHash()).isNotEqualTo(tokenResponse.refreshToken());
+		assertThat(refreshTokenRepository.countByUsuarioIdAndRevokedFalse(tokenResponse.usuario().id())).isEqualTo(1);
 	}
 
 	@Test
@@ -135,5 +152,7 @@ class AuthLoginIntegrationTest extends AbstractIntegrationTest {
 					.andExpect(jsonPath("$.code").value("AUTHENTICATION_FAILED"))
 					.andExpect(jsonPath("$.detail").value("Credenciais invalidas."));
 		}
+
+		assertThat(refreshTokenRepository.count()).isZero();
 	}
 }

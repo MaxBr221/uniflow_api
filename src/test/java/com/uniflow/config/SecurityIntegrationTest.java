@@ -71,12 +71,12 @@ class SecurityIntegrationTest extends AbstractIntegrationTest {
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
 
-		// /auth/refresh liberada com permitAll (retorna 404 ate BE-025)
+		// /auth/refresh liberada com permitAll: payload vazio cai no Bean Validation (400), nao em 401/403
 		mockMvc.perform(post("/api/v1/auth/refresh")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content("{}"))
-				.andExpect(status().isNotFound())
-				.andExpect(jsonPath("$.code").value("ROUTE_NOT_FOUND"));
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
 
 		mockMvc.perform(get("/api/v1/semestres"))
 				.andExpect(status().isUnauthorized())

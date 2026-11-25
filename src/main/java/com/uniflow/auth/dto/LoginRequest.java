@@ -18,9 +18,9 @@ public record LoginRequest(
 		@Size(max = 255, message = "e-mail deve ter no maximo 255 caracteres")
 		String email,
 
-		@Schema(description = "Senha da conta do estudante", example = "UniFlow@2026", maxLength = 72, format = "password")
+		@Schema(description = "Senha da conta do estudante", example = "UniFlow@2026", maxLength = PasswordPolicy.MAX_LENGTH, format = "password")
 		@NotBlank(message = "senha e obrigatoria")
-		@Size(max = 72, message = "senha deve ter no maximo 72 caracteres")
+		@Size(max = PasswordPolicy.MAX_LENGTH, message = "senha deve ter no maximo 72 caracteres")
 		String senha
 ) {
 

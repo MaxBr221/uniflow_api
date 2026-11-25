@@ -8,13 +8,17 @@ class SensitiveDataMaskerTest {
 
 	@Test
 	void shouldMaskBearerTokensJwtAndSensitiveFields() {
-		String raw = "Authorization: Bearer secreto_opaco password=MinhaSenha123 {\"senhaHash\":\"$2a$10$hash\",\"refreshToken\":\"ref-abc-123\"} eyJhbGciOiJIUzI1NiJ9.payload123456.signature123456";
+		String raw = "Authorization: Bearer secreto_opaco password=MinhaSenha123 "
+				+ "{\"senhaAtual\":\"Atual@2026\",\"novaSenha\":\"Nova@2027\",\"senhaHash\":\"$2a$10$hash\",\"refreshToken\":\"ref-abc-123\"} "
+				+ "eyJhbGciOiJIUzI1NiJ9.payload123456.signature123456";
 
 		String masked = SensitiveDataMasker.mask(raw);
 
 		assertThat(masked)
 				.doesNotContain("secreto_opaco")
 				.doesNotContain("MinhaSenha123")
+				.doesNotContain("Atual@2026")
+				.doesNotContain("Nova@2027")
 				.doesNotContain("$2a$10$hash")
 				.doesNotContain("ref-abc-123")
 				.doesNotContain("eyJhbGciOiJIUzI1NiJ9")

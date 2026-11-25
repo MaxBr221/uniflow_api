@@ -27,14 +27,18 @@ public record RegisterRequest(
 		@Schema(
 				description = "Senha forte (8 a 72 caracteres, contendo letra maiuscula, minuscula, numero e caractere especial, sem espacos)",
 				example = "UniFlow@2026",
-				minLength = 8,
-				maxLength = 72,
+				minLength = PasswordPolicy.MIN_LENGTH,
+				maxLength = PasswordPolicy.MAX_LENGTH,
 				format = "password"
 		)
 		@NotBlank(message = "senha e obrigatoria")
-		@Size(min = 8, max = 72, message = "senha deve ter entre 8 e 72 caracteres")
+		@Size(
+				min = PasswordPolicy.MIN_LENGTH,
+				max = PasswordPolicy.MAX_LENGTH,
+				message = "senha deve ter entre 8 e 72 caracteres"
+		)
 		@Pattern(
-				regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9\\s])\\S+$",
+				regexp = PasswordPolicy.STRONG_PASSWORD_REGEX,
 				message = "senha deve conter letra maiuscula, minuscula, numero, caractere especial e nao possuir espacos"
 		)
 		String senha
