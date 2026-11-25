@@ -7,6 +7,8 @@ import jakarta.validation.Validator;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -35,6 +37,9 @@ class UniflowApplicationTests extends AbstractIntegrationTest {
 	@Autowired
 	private RequestLoggingFilter requestLoggingFilter;
 
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
 	@Test
 	void contextLoadsWithPostgreSqlFlywayAndCoreInfrastructureBeans() throws Exception {
 		assertThat(dataSource).isNotNull();
@@ -45,6 +50,10 @@ class UniflowApplicationTests extends AbstractIntegrationTest {
 		assertThat(validator).isNotNull();
 		assertThat(globalExceptionHandler).isNotNull();
 		assertThat(requestLoggingFilter).isNotNull();
+		assertThat(passwordEncoder).isInstanceOf(BCryptPasswordEncoder.class);
+		String encoded = passwordEncoder.encode("UniFlow@2026");
+		assertThat(passwordEncoder.matches("UniFlow@2026", encoded)).isTrue();
+		assertThat(passwordEncoder.matches("SenhaIncorreta@2026", encoded)).isFalse();
 
 		try (Connection connection = dataSource.getConnection();
 			 Statement statement = connection.createStatement()) {
