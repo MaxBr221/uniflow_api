@@ -1,8 +1,8 @@
 # Status do Projeto — UniFlow Backend (`uniflow-backend`)
 
-> **Última atualização**: `2026-11-24`
+> **Última atualização**: `2026-11-25`
 > **Repositório**: `c:\uniflow_api\api` (exclusivo Backend)
-> **Estado Geral**: `ÉPICO 2 EM ANDAMENTO` — `19` concluídas (`12 / 12` Épico 1 + `BE-013`..`BE-018` e `BE-020` do Épico 2); suíte completa validada (`.\mvnw.cmd clean test` `94/94` com PostgreSQL `16.15` Testcontainers e Hibernate `validate`). Próximas desbloqueadas: `BE-019`, `BE-021` e `BE-023`.
+> **Estado Geral**: `ÉPICO 2 EM ANDAMENTO` — `23` concluídas (`12 / 12` Épico 1 + `BE-013`..`BE-023` do Épico 2); suíte completa validada (`.\mvnw.cmd clean test` `142/142` com PostgreSQL `16.15` Testcontainers e Hibernate `validate`). Próximas desbloqueadas no Épico 2: `BE-027` e `BE-024`.
 
 ---
 
@@ -10,13 +10,13 @@
 
 | Recorte | Concluído | Em Andamento | Pendente | Fora do MVP | Total | % Concluído |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **MVP 1.0 (Épicos 1–8: `BE-001`..`BE-119`)** | 19 | 0 | 100 | 0 | 119 | **16.0%** |
+| **MVP 1.0 (Épicos 1–8: `BE-001`..`BE-119`)** | 23 | 0 | 96 | 0 | 119 | **19.3%** |
 | **Versão 1.1 (Épicos 9–10: `BE-120`..`BE-144`)** | 0 | 0 | 25 | 0 | 25 | **0.0%** |
 | **Versão 2.0 / Futura (Épicos 11–12: `BE-145`..`BE-158`)** | 0 | 0 | 0 | 14 | 14 | **0.0%** |
-| **TOTAL GERAL** | **19** | **0** | **125** | **14** | **158** | **12.0%** |
+| **TOTAL GERAL** | **23** | **0** | **121** | **14** | **158** | **14.6%** |
 
 ```text
-MVP 1.0 (Épicos 1-8)    : [███░░░░░░░░░░░░░░░░░] 16.0% (19 / 119)
+MVP 1.0 (Épicos 1-8)    : [████░░░░░░░░░░░░░░░░] 19.3% (23 / 119)
 v1.1    (Épicos 9-10)   : [░░░░░░░░░░░░░░░░░░░░]  0.0% (0 / 25)
 v2.0    (Épicos 11-12)  : [░░░░░░░░░░░░░░░░░░░░]  0.0% (0 / 14) - Aguardando validação do MVP
 ```
@@ -28,7 +28,7 @@ v2.0    (Épicos 11-12)  : [░░░░░░░░░░░░░░░░░�
 | Épico | Título | Módulo(s) | Versão Alvo | Faixa | Concluídas | Status |
 | :---: | :--- | :--- | :--- | :--- | :---: | :--- |
 | **1** | Configuração e estrutura do projeto | `config`, `common` | `MVP 1.0` | `BE-001`..`BE-012` | 12 / 12 | Concluído |
-| **2** | Autenticação e usuários | `MOD-01`, `MOD-02` | `MVP 1.0` | `BE-013`..`BE-031` | 7 / 19 | Em andamento |
+| **2** | Autenticação e usuários | `MOD-01`, `MOD-02` | `MVP 1.0` | `BE-013`..`BE-031` | 11 / 19 | Em andamento |
 | **3** | Semestres acadêmicos | `MOD-03` | `MVP 1.0` | `BE-032`..`BE-045` | 0 / 14 | Não iniciado |
 | **4** | Disciplinas | `MOD-04` | `MVP 1.0` | `BE-046`..`BE-058` | 0 / 13 | Não iniciado |
 | **5** | Aulas e horários | `MOD-05` | `MVP 1.0` | `BE-059`..`BE-070` | 0 / 12 | Não iniciado |
@@ -44,10 +44,14 @@ v2.0    (Épicos 11-12)  : [░░░░░░░░░░░░░░░░░�
 
 ## 3. Estado Real Observado no Workspace
 
-Fatos verificados diretamente em `c:\uniflow_api\api` (`2026-11-24`):
+Fatos verificados diretamente em `c:\uniflow_api\api` (`2026-11-25`):
 - **Java**: `21.0.9 LTS` ativo no ambiente.
 - **Docker**: Docker Desktop ativo no host (`29.3.1`).
-- **Suíte completa executada**: `.\mvnw.cmd clean test` -> **`Tests run: 94, Failures: 0, Errors: 0, Skipped: 0`** (`BUILD SUCCESS`), validando `UniflowApplicationTests`, `UsuarioRepositoryIntegrationTest` (`5/5` em PostgreSQL `16.15` Testcontainers com `V1` + `V2` e Hibernate `ddl-auto=validate`), `PasswordEncoderConfigTest` (`7/7`), `RegisterRequestValidationTest` (`25/25`), `RegisterDtoWebMvcTest` (`2/2`), `LoginRequestValidationTest` (`13/13`) e `LoginDtoWebMvcTest` (`2/2`).
+- **Suíte completa executada**: `.\mvnw.cmd clean test` -> **`Tests run: 142, Failures: 0, Errors: 0, Skipped: 0`** (`BUILD SUCCESS`), validando `UniflowApplicationTests`, `UsuarioRepositoryIntegrationTest` (`5/5` em PostgreSQL `16.15` Testcontainers com `V1` + `V2` e Hibernate `ddl-auto=validate`), `JwtAuthenticationFilterTest` (`9/9`), `JwtAuthenticationFilterWebMvcTest` (`2/2`), `JwtAuthenticationIntegrationTest` (`1/1`), `AuthRegistrationIntegrationTest` (`1/1`), `AuthLoginIntegrationTest` (`2/2`), `SecurityIntegrationTest` (`2/2`), `SecurityConfigWebMvcTest` (`5/5`), `SecuritySwaggerEnabledWebMvcTest` (`1/1`), `AuthControllerWebMvcTest` (`7/7`), `AuthServiceTest` (`9/9`), `JwtServiceTest` (`7/7`), `AuthMapperTest` (`2/2`), `PasswordEncoderConfigTest` (`7/7`), `RegisterRequestValidationTest` (`25/25`), `RegisterDtoWebMvcTest` (`2/2`), `LoginRequestValidationTest` (`13/13`) e `LoginDtoWebMvcTest` (`2/2`).
+- **Autenticação Stateless por Access Token JWT (`BE-022` / `MOD-01`)**: [AuthenticatedUser.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/auth/security/AuthenticatedUser.java) (`UserDetails` com `UUID id`, `email`, `status`, `getPassword() == null`) + [JwtAuthenticationFilter.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/auth/security/JwtAuthenticationFilter.java) (`OncePerRequestFilter` validando Bearer token via `JwtService`, verificando `usuario.podeAutenticar()` em `UsuarioRepository` e populando `SecurityContextHolder`, integrado em [SecurityConfig.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/config/SecurityConfig.java) antes de `UsernamePasswordAuthenticationFilter.class`).
+- **Emissão de Access Token JWT e Login (`BE-023` / `MOD-01`)**: [JwtService.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/auth/service/JwtService.java) (HS256 via `app.security.jwt.secret`, expiração `app.security.jwt.access-expiration-ms`, claims `sub`, `jti`, `iat`, `exp`, `email`, `type=access`) + `POST /api/v1/auth/login` em [AuthController.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/auth/controller/AuthController.java) e [AuthService.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/auth/service/AuthService.java) com validação BCrypt, checagem de `podeAutenticar()` e resposta genérica `401 AUTHENTICATION_FAILED` (`refreshToken` com rotação entra na `BE-024`).
+- **Spring Security Stateless (`BE-021`)**: [SecurityConfig.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/config/SecurityConfig.java) com `@EnableWebSecurity`, `@EnableMethodSecurity`, `SessionCreationPolicy.STATELESS`, CORS configurável via `app.cors.allowed-origins`, `permitAll` restrito (`POST /api/v1/auth/register`, `POST /api/v1/auth/login`, `POST /api/v1/auth/refresh` e OpenAPI/Swagger condicionados por perfil) e handlers `401`/`403` em `ProblemDetail` RFC 7807 via `HandlerExceptionResolver`.
+- **Cadastro de Usuário (`BE-019` / `MOD-01`)**: [AuthController.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/auth/controller/AuthController.java) (`POST /api/v1/auth/register` -> `201 Created` público, `@SecurityRequirements`, Swagger `@ApiResponses`), [AuthService.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/auth/service/AuthService.java) (normalização, verificação case-insensitive + tratamento de corrida em `uk_usuarios_email` -> `ConflictException 409`, hash BCrypt) e [AuthMapper.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/auth/mapper/AuthMapper.java) (mapeamento seguro sem `senhaHash`).
 - **Criptografia de Senhas (`BE-020` / `RNF-005`)**: [PasswordEncoderConfig.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/config/PasswordEncoderConfig.java) provendo `@Bean PasswordEncoder` (`BCryptPasswordEncoder` com custo mínimo `10` e configurável `10..31` via `app.security.password.bcrypt-strength`).
 - **DTOs de Autenticação (`MOD-01`)**: Records [RegisterRequest.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/auth/dto/RegisterRequest.java), [AuthUserResponse.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/auth/dto/AuthUserResponse.java), [LoginRequest.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/auth/dto/LoginRequest.java) e [AuthTokenResponse.java](file:///c:/uniflow_api/api/src/main/java/com/uniflow/auth/dto/AuthTokenResponse.java) (Bean Validation, normalização de `email`, saída UTC sem `senhaHash` e redação de segredos em `toString()`).
 - **Flyway V2 (`BE-015` concluída)**: [V2__create_usuarios_table.sql](file:///c:/uniflow_api/api/src/main/resources/db/migration/V2__create_usuarios_table.sql) (`usuarios`, `refresh_tokens`, constraints e índices) aplicada e validada pelo Hibernate (`validate`) e por `FlywayConfigTest` (`2/2`).
@@ -72,6 +76,5 @@ Fatos verificados diretamente em `c:\uniflow_api\api` (`2026-11-24`):
 
 ## 5. Próximos Passos Recomendados (Épico 2 Desbloqueado)
 
-1. `/run BE-019` — Implementar cadastro de usuário (`POST /api/v1/auth/register` — agora desbloqueada após `BE-020`).
-2. `/run BE-021` — Configurar Spring Security (`SecurityFilterChain` stateless + handlers `401`/`403` RFC 7807).
-3. `/run BE-023` — Implementar geração de access token (`JwtService` + `POST /api/v1/auth/login` — também desbloqueada após `BE-020`).
+1. `/run BE-027` — Implementar consulta do usuário autenticado (`GET /api/v1/auth/me` e/ou `/api/v1/usuarios/me` lendo o principal `AuthenticatedUser` via `SecurityContext` — recém-desbloqueada após `BE-022`!).
+2. `/run BE-024` — Implementar refresh token com rotação (`RefreshToken` persistido via hash, `revoked` e `replacedBy` — também desbloqueada após `BE-023`!).

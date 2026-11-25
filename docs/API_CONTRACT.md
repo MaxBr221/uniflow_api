@@ -47,8 +47,8 @@
 ### Épico 2 — Autenticação e Usuários (`MVP 1.0`)
 | Método | Rota | Acesso | Descrição | Tarefa(s) | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `POST` | `/api/v1/auth/register` | Público | Cadastro de estudante | `BE-019` | `PLANEJADO` |
-| `POST` | `/api/v1/auth/login` | Público | Login emitindo access + refresh token | `BE-023`, `BE-024` | `PLANEJADO` |
+| `POST` | `/api/v1/auth/register` | Público (`permitAll`) | Cadastro de estudante (`201 Created`, `AuthUserResponse`, conflito `409`) | `BE-019`, `BE-021` | `IMPLEMENTADO` |
+| `POST` | `/api/v1/auth/login` | Público (`permitAll`) | Login emitindo access token JWT (`refreshToken` com rotação em `BE-024`) | `BE-023`, `BE-024` | `PARCIAL (accessToken implementado)` |
 | `POST` | `/api/v1/auth/refresh` | Público (token) | Renovação de sessão com rotação do refresh token | `BE-024`, `BE-025` | `PLANEJADO` |
 | `POST` | `/api/v1/auth/logout` | Autenticado | Logout e revogação da sessão | `BE-026` | `PLANEJADO` |
 | `GET` | `/api/v1/auth/me` | Autenticado | Dados do usuário autenticado | `BE-027` | `PLANEJADO` |
