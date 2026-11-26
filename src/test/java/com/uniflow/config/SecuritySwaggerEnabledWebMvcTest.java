@@ -1,6 +1,8 @@
 package com.uniflow.config;
 
+import com.uniflow.auth.service.JwtService;
 import com.uniflow.common.exception.GlobalExceptionHandler;
+import com.uniflow.usuario.repository.UsuarioRepository;
 import org.junit.jupiter.api.Test;
 import org.springdoc.core.configuration.SpringDocConfiguration;
 import org.springdoc.core.configuration.SpringDocSpecPropertiesConfiguration;
@@ -17,6 +19,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,6 +57,12 @@ class SecuritySwaggerEnabledWebMvcTest {
 
 	@Autowired
 	private MockMvc mockMvc;
+
+	@MockitoBean
+	private JwtService jwtService;
+
+	@MockitoBean
+	private UsuarioRepository usuarioRepository;
 
 	@Test
 	void shouldAllowPublicOpenApiAndSwaggerWhenEnabledWhileKeepingApiRoutesAuthenticated() throws Exception {

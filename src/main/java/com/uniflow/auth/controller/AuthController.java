@@ -7,9 +7,7 @@ import com.uniflow.auth.dto.LoginRequest;
 import com.uniflow.auth.dto.LogoutRequest;
 import com.uniflow.auth.dto.RefreshTokenRequest;
 import com.uniflow.auth.dto.RegisterRequest;
-import com.uniflow.auth.security.AuthenticatedUser;
 import com.uniflow.auth.service.AuthService;
-import com.uniflow.common.exception.AuthenticationFailedException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,7 +22,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -148,8 +145,7 @@ public class AuthController {
 	 * Encerra a sessao do estudante autenticado revogando o refresh token ativo
 	 * (ou todas as sessoes ativas quando omitido) e limpando o {@code SecurityContext}.
 	 *
-	 * @param authenticatedUser usuario autenticado extraido do {@code SecurityContext}
-	 * @param request           payload opcional contendo o refresh token a revogar
+	 * @param request payload opcional contendo o refresh token a revogar
 	 * @return {@code 204 No Content}
 	 */
 	@PostMapping("/logout")
@@ -176,13 +172,8 @@ public class AuthController {
 					content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ProblemDetail.class))
 			)
 	})
-	public ResponseEntity<Void> logout(
-			@AuthenticationPrincipal AuthenticatedUser authenticatedUser,
-			@Valid @RequestBody(required = false) LogoutRequest request) {
-		if (authenticatedUser == null) {
-			throw new AuthenticationFailedException("Autenticacao necessaria ou credenciais invalidas.");
-		}
-		authService.logout(authenticatedUser.id(), request);
+	public ResponseEntity<Void> logout(@Valid @RequestBody(required = false) LogoutRequest request) {
+		authService.logout(request);
 		SecurityContextHolder.clearContext();
 		return ResponseEntity.noContent().build();
 	}

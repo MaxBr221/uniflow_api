@@ -2,6 +2,7 @@ package com.uniflow.auth.service;
 
 import com.uniflow.auth.entity.RefreshToken;
 import com.uniflow.auth.repository.RefreshTokenRepository;
+import com.uniflow.auth.security.OwnershipValidator;
 import com.uniflow.common.exception.AuthenticationFailedException;
 import com.uniflow.common.exception.UnauthorizedOperationException;
 import com.uniflow.usuario.entity.Usuario;
@@ -153,10 +154,11 @@ public class RefreshTokenService {
 		}
 
 		RefreshToken token = tokenOpt.get();
-		if (!token.getUsuario().getId().equals(usuarioId)) {
-			log.warn("Tentativa de revogacao de refresh token de outro usuario bloqueada (actorUsuarioId={})", usuarioId);
-			throw new UnauthorizedOperationException("Voce nao possui permissao para revogar este refresh token.");
-		}
+		OwnershipValidator.assertOwner(
+				token.getUsuario().getId(),
+				usuarioId,
+				"Voce nao possui permissao para revogar este refresh token."
+		);
 
 		if (token.isRevoked()) {
 			return 0;

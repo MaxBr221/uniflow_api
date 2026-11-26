@@ -136,6 +136,16 @@ class GlobalExceptionHandlerWebMvcTest {
 				.andExpect(jsonPath("$.status").value(405))
 				.andExpect(jsonPath("$.code").value("METHOD_NOT_ALLOWED"))
 				.andExpect(jsonPath("$.fieldErrors", empty()));
+
+		mockMvc.perform(post("/test-exceptions/json-only")
+						.contentType(MediaType.TEXT_PLAIN)
+						.content("texto puro"))
+				.andExpect(status().isUnsupportedMediaType())
+				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+				.andExpect(jsonPath("$.type").value("https://api.uniflow.dev/errors/unsupported-media-type"))
+				.andExpect(jsonPath("$.status").value(415))
+				.andExpect(jsonPath("$.code").value("UNSUPPORTED_MEDIA_TYPE"))
+				.andExpect(jsonPath("$.fieldErrors", empty()));
 	}
 
 	@Test
@@ -212,6 +222,10 @@ class GlobalExceptionHandlerWebMvcTest {
 
 		@PostMapping("/body")
 		void body(@RequestBody Map<String, Object> payload) {
+		}
+
+		@PostMapping(value = "/json-only", consumes = MediaType.APPLICATION_JSON_VALUE)
+		void jsonOnly(@RequestBody Map<String, Object> payload) {
 		}
 
 		@GetMapping("/param")

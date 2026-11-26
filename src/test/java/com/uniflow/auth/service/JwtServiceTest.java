@@ -126,4 +126,67 @@ class JwtServiceTest {
 		assertThatThrownBy(() -> new JwtService(TEST_SECRET, 0L))
 				.isInstanceOf(IllegalArgumentException.class);
 	}
+
+	@Test
+	void shouldRejectBlankUnsignedMalformedMissingSubOrInvalidUuidSubTokensAndNullUserOnGenerate() {
+		Instant fixedNow = Instant.parse("2026-11-25T12:00:00Z");
+		JwtService jwtService = new JwtService(TEST_SECRET, 900_000L, Clock.fixed(fixedNow, ZoneOffset.UTC));
+		SecretKey key = Keys.hmacShaKeyFor(TEST_SECRET.getBytes(StandardCharsets.UTF_8));
+
+		assertThatThrownBy(() -> jwtService.generateAccessToken(null))
+				.isInstanceOf(NullPointerException.class);
+		Usuario semId = new Usuario("Sem Id", "sem.id@uniflow.edu", "$2a$10$hash");
+		assertThatThrownBy(() -> jwtService.generateAccessToken(semId))
+				.isInstanceOf(NullPointerException.class);
+
+		assertThatThrownBy(() -> jwtService.parseAndValidateAccessToken(null))
+				.isInstanceOf(JwtException.class);
+		assertThatThrownBy(() -> jwtService.parseAndValidateAccessToken("   "))
+				.isInstanceOf(JwtException.class);
+		assertThatThrownBy(() -> jwtService.parseAndValidateAccessToken("nao.e.um.jwt.valido"))
+				.isInstanceOf(JwtException.class);
+
+		// Ataque classico alg=none (token nao assinado)
+		String unsignedAlgNone = java.util.Base64.getUrlEncoder().withoutPadding()
+				.encodeToString("{\"alg\":\"none\",\"typ\":\"JWT\"}".getBytes(StandardCharsets.UTF_8))
+				+ "."
+				+ java.util.Base64.getUrlEncoder().withoutPadding()
+				.encodeToString(("{\"sub\":\"" + UUID.randomUUID() + "\",\"jti\":\"" + UUID.randomUUID()
+						+ "\",\"type\":\"access\"}").getBytes(StandardCharsets.UTF_8))
+				+ ".";
+		assertThatThrownBy(() -> jwtService.parseAndValidateAccessToken(unsignedAlgNone))
+				.isInstanceOf(JwtException.class);
+
+		String blankJtiToken = Jwts.builder()
+				.id("   ")
+				.subject(UUID.randomUUID().toString())
+				.claim(JwtService.CLAIM_TOKEN_TYPE, JwtService.TOKEN_TYPE_ACCESS)
+				.issuedAt(Date.from(fixedNow))
+				.expiration(Date.from(fixedNow.plusSeconds(300)))
+				.signWith(key, Jwts.SIG.HS256)
+				.compact();
+		assertThatThrownBy(() -> jwtService.parseAndValidateAccessToken(blankJtiToken))
+				.isInstanceOf(JwtException.class);
+
+		String missingSubToken = Jwts.builder()
+				.id(UUID.randomUUID().toString())
+				.claim(JwtService.CLAIM_TOKEN_TYPE, JwtService.TOKEN_TYPE_ACCESS)
+				.issuedAt(Date.from(fixedNow))
+				.expiration(Date.from(fixedNow.plusSeconds(300)))
+				.signWith(key, Jwts.SIG.HS256)
+				.compact();
+		assertThatThrownBy(() -> jwtService.parseAndValidateAccessToken(missingSubToken))
+				.isInstanceOf(JwtException.class);
+
+		String nonUuidSubToken = Jwts.builder()
+				.id(UUID.randomUUID().toString())
+				.subject("usuario-nao-uuid")
+				.claim(JwtService.CLAIM_TOKEN_TYPE, JwtService.TOKEN_TYPE_ACCESS)
+				.issuedAt(Date.from(fixedNow))
+				.expiration(Date.from(fixedNow.plusSeconds(300)))
+				.signWith(key, Jwts.SIG.HS256)
+				.compact();
+		assertThatThrownBy(() -> jwtService.extractUserId(nonUuidSubToken))
+				.isInstanceOf(JwtException.class);
+	}
 }

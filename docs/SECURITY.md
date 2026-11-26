@@ -16,9 +16,9 @@ Este documento define os requisitos obrigatórios de segurança para toda a API 
    - `senhaHash` nunca pode aparecer em DTOs de saída, `ProblemDetail` ou logs (`RNF-013`).
 3. **Confiança Zero em IDs Enviados pelo Frontend**:
    - **Nunca** aceitar `usuarioId` no body, path ou query param para autorizar operações.
-   - Sempre extrair o usuário autenticado do `SecurityContext` (`CurrentUserService` / `@AuthenticationPrincipal`).
-4. **Isolamento Estrito Entre Usuários (`BE-030`, `BE-057`, `BE-131`, `RNF-003`, `RNF-014`)**:
-   - Toda consulta/mutação deve filtrar ou validar propriedade pelo usuário autenticado.
+   - Sempre extrair o usuário autenticado do `SecurityContext` (`CurrentUserService` e `OwnershipValidator`, evitando autenticação manual em controllers).
+4. **Isolamento Estrito Entre Usuários (`BE-030`, `BE-031`, `BE-057`, `BE-131`, `RNF-003`, `RNF-014`)**:
+   - Toda consulta/mutação deve filtrar ou validar propriedade pelo usuário autenticado via `OwnershipValidator` (`403 FORBIDDEN_OPERATION` / `404 RESOURCE_NOT_FOUND`), com `JwtAuthenticationFilter` obrigatório no `SecurityConfig` e auditoria contínua em `SecurityAuditIntegrationTest` e `AuthEndToEndFlowIntegrationTest`.
    - A única exceção controlada ocorre na `Versão 1.1` para trabalhos e arquivos explicitamente compartilhados via participação aceita em `Grupo` (`BE-130`, `BE-131`).
 
 ---

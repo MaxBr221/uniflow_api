@@ -136,15 +136,14 @@ public class AuthService {
 	}
 
 	/**
-	 * Encerra a sessao do usuario autenticado revogando o refresh token informado ou,
-	 * caso nenhum token especifico seja enviado, todos os refresh tokens ativos da conta.
+	 * Encerra a sessao do usuario autenticado (identificado exclusivamente via {@code SecurityContext})
+	 * revogando o refresh token informado ou, caso nenhum token especifico seja enviado, todos os refresh tokens ativos da conta.
 	 *
-	 * @param authenticatedUserId identificador do usuario extraido do {@code SecurityContext}
-	 * @param request             payload opcional com refresh token especifico
+	 * @param request payload opcional com refresh token especifico
 	 */
 	@Transactional
-	public void logout(UUID authenticatedUserId, LogoutRequest request) {
-		Objects.requireNonNull(authenticatedUserId, "authenticatedUserId nao deve ser nulo");
+	public void logout(LogoutRequest request) {
+		UUID authenticatedUserId = currentUserService.getCurrentUserId();
 
 		int revokedTokens = (request != null && request.refreshToken() != null)
 				? refreshTokenService.revokeTokenForUser(authenticatedUserId, request.refreshToken())

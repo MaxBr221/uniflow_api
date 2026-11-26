@@ -4,7 +4,6 @@ import com.uniflow.auth.security.JwtAuthenticationFilter;
 import com.uniflow.auth.service.JwtService;
 import com.uniflow.usuario.repository.UsuarioRepository;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +26,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Configuracao central do Spring Security em modo stateless ({@code RNF-002}, {@code RNF-003}).
@@ -61,10 +61,13 @@ public class SecurityConfig {
 			HttpSecurity http,
 			AuthenticationEntryPoint authenticationEntryPoint,
 			AccessDeniedHandler accessDeniedHandler,
-			ObjectProvider<JwtService> jwtServiceProvider,
-			ObjectProvider<UsuarioRepository> usuarioRepositoryProvider,
+			JwtService jwtService,
+			UsuarioRepository usuarioRepository,
 			@Value("${springdoc.api-docs.enabled:false}") boolean apiDocsEnabled,
 			@Value("${springdoc.swagger-ui.enabled:false}") boolean swaggerUiEnabled) throws Exception {
+		Objects.requireNonNull(jwtService, "jwtService nao deve ser nulo");
+		Objects.requireNonNull(usuarioRepository, "usuarioRepository nao deve ser nulo");
+
 		http
 				.csrf(AbstractHttpConfigurer::disable)
 				.cors(Customizer.withDefaults())
@@ -85,16 +88,11 @@ public class SecurityConfig {
 						authorize.requestMatchers(HttpMethod.GET, SWAGGER_UI_ENDPOINTS).permitAll();
 					}
 					authorize.anyRequest().authenticated();
-				});
-
-		JwtService jwtService = jwtServiceProvider.getIfAvailable();
-		UsuarioRepository usuarioRepository = usuarioRepositoryProvider.getIfAvailable();
-		if (jwtService != null && usuarioRepository != null) {
-			http.addFilterBefore(
-					new JwtAuthenticationFilter(jwtService, usuarioRepository),
-					UsernamePasswordAuthenticationFilter.class
-			);
-		}
+				})
+				.addFilterBefore(
+						new JwtAuthenticationFilter(jwtService, usuarioRepository),
+						UsernamePasswordAuthenticationFilter.class
+				);
 
 		return http.build();
 	}

@@ -274,9 +274,10 @@ class AuthServiceTest {
 	@Test
 	void shouldLogoutRevokingSpecificRefreshTokenWhenProvided() {
 		UUID authenticatedUserId = UUID.randomUUID();
+		when(currentUserService.getCurrentUserId()).thenReturn(authenticatedUserId);
 		when(refreshTokenService.revokeTokenForUser(authenticatedUserId, "rft_sessao_atual")).thenReturn(1);
 
-		authService.logout(authenticatedUserId, new LogoutRequest("  rft_sessao_atual  "));
+		authService.logout(new LogoutRequest("  rft_sessao_atual  "));
 
 		verify(refreshTokenService).revokeTokenForUser(authenticatedUserId, "rft_sessao_atual");
 		verify(refreshTokenService, never()).revokeAllForUser(any());
@@ -285,10 +286,11 @@ class AuthServiceTest {
 	@Test
 	void shouldLogoutRevokingAllActiveRefreshTokensWhenBodyOrTokenIsOmitted() {
 		UUID authenticatedUserId = UUID.randomUUID();
+		when(currentUserService.getCurrentUserId()).thenReturn(authenticatedUserId);
 		when(refreshTokenService.revokeAllForUser(authenticatedUserId)).thenReturn(2);
 
-		authService.logout(authenticatedUserId, null);
-		authService.logout(authenticatedUserId, new LogoutRequest(null));
+		authService.logout(null);
+		authService.logout(new LogoutRequest(null));
 
 		verify(refreshTokenService, org.mockito.Mockito.times(2)).revokeAllForUser(authenticatedUserId);
 		verify(refreshTokenService, never()).revokeTokenForUser(any(), any());
@@ -297,11 +299,23 @@ class AuthServiceTest {
 	@Test
 	void shouldPropagateUnauthorizedOperationWhenLogoutAttemptsToRevokeAnotherUsersToken() {
 		UUID attackerId = UUID.randomUUID();
+		when(currentUserService.getCurrentUserId()).thenReturn(attackerId);
 		when(refreshTokenService.revokeTokenForUser(attackerId, "rft_alheio"))
 				.thenThrow(new UnauthorizedOperationException("Voce nao possui permissao para revogar este refresh token."));
 
-		assertThatThrownBy(() -> authService.logout(attackerId, new LogoutRequest("rft_alheio")))
+		assertThatThrownBy(() -> authService.logout(new LogoutRequest("rft_alheio")))
 				.isInstanceOf(UnauthorizedOperationException.class);
+	}
+
+	@Test
+	void shouldPropagateAuthenticationFailedWhenLogoutHasNoAuthenticatedUser() {
+		when(currentUserService.getCurrentUserId())
+				.thenThrow(new AuthenticationFailedException("Autenticacao necessaria ou credenciais invalidas."));
+
+		assertThatThrownBy(() -> authService.logout(null))
+				.isInstanceOf(AuthenticationFailedException.class);
+
+		verifyNoInteractions(refreshTokenService);
 	}
 
 	@Test
@@ -402,5 +416,15 @@ class AuthServiceTest {
 				.isInstanceOf(AuthenticationFailedException.class);
 
 		verifyNoInteractions(passwordEncoder, usuarioRepository, refreshTokenService);
+	}
+
+	@Test
+	void shouldRejectNullRequestsFailFastWithoutSideEffects() {
+		assertThatThrownBy(() -> authService.register(null)).isInstanceOf(NullPointerException.class);
+		assertThatThrownBy(() -> authService.login(null)).isInstanceOf(NullPointerException.class);
+		assertThatThrownBy(() -> authService.refresh(null)).isInstanceOf(NullPointerException.class);
+		assertThatThrownBy(() -> authService.changePassword(null)).isInstanceOf(NullPointerException.class);
+
+		verifyNoInteractions(usuarioRepository, passwordEncoder, jwtService, refreshTokenService, currentUserService);
 	}
 }

@@ -16,6 +16,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.method.ParameterValidationResult;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -165,6 +166,19 @@ public class GlobalExceptionHandler {
 				"METHOD_NOT_ALLOWED",
 				"Metodo HTTP nao suportado",
 				"Metodo " + ex.getMethod() + " nao e suportado para esta rota.",
+				request
+		);
+	}
+
+	@ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+	public ResponseEntity<ProblemDetail> handleMediaTypeNotSupported(
+			HttpMediaTypeNotSupportedException ex,
+			HttpServletRequest request) {
+		return buildResponse(
+				HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+				"UNSUPPORTED_MEDIA_TYPE",
+				"Tipo de midia nao suportado",
+				"O Content-Type informado nao e suportado para esta rota.",
 				request
 		);
 	}

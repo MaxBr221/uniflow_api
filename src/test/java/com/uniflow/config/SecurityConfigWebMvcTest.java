@@ -1,6 +1,8 @@
 package com.uniflow.config;
 
+import com.uniflow.auth.service.JwtService;
 import com.uniflow.common.exception.GlobalExceptionHandler;
+import com.uniflow.usuario.repository.UsuarioRepository;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,6 +46,12 @@ class SecurityConfigWebMvcTest {
 
 	@Autowired
 	private MockMvc mockMvc;
+
+	@MockitoBean
+	private JwtService jwtService;
+
+	@MockitoBean
+	private UsuarioRepository usuarioRepository;
 
 	@Test
 	void shouldReturn401ProblemDetailAndKeepStatelessWhenUnauthenticatedOnProtectedRoute() throws Exception {

@@ -6,29 +6,31 @@ import com.uniflow.auth.dto.LoginRequest;
 import com.uniflow.auth.dto.LogoutRequest;
 import com.uniflow.auth.dto.RefreshTokenRequest;
 import com.uniflow.auth.dto.RegisterRequest;
-import com.uniflow.auth.security.AuthenticatedUser;
 import com.uniflow.auth.service.AuthService;
+import com.uniflow.auth.service.JwtService;
 import com.uniflow.common.exception.AuthenticationFailedException;
 import com.uniflow.common.exception.ConflictException;
 import com.uniflow.common.exception.GlobalExceptionHandler;
 import com.uniflow.common.exception.UnauthorizedOperationException;
+import com.uniflow.config.SecurityConfig;
+import com.uniflow.usuario.entity.Usuario;
 import com.uniflow.usuario.enums.StatusUsuario;
-import org.junit.jupiter.api.AfterEach;
+import com.uniflow.usuario.repository.UsuarioRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +38,6 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.matchesRegex;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
@@ -49,8 +50,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = AuthController.class)
-@Import({AuthController.class, GlobalExceptionHandler.class})
-@AutoConfigureMockMvc(addFilters = false)
+@Import({
+		AuthController.class,
+		SecurityConfig.class,
+		GlobalExceptionHandler.class
+})
+@AutoConfigureMockMvc(addFilters = true)
 @ActiveProfiles("test")
 class AuthControllerWebMvcTest {
 
@@ -59,6 +64,12 @@ class AuthControllerWebMvcTest {
 
 	@MockitoBean
 	private AuthService authService;
+
+	@MockitoBean
+	private JwtService jwtService;
+
+	@MockitoBean
+	private UsuarioRepository usuarioRepository;
 
 	@Test
 	void shouldRegisterStudentAndReturn201CreatedWithoutPasswordFields() throws Exception {
@@ -322,24 +333,35 @@ class AuthControllerWebMvcTest {
 				.andExpect(jsonPath("$.timestamp", matchesRegex("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$")));
 	}
 
-	@AfterEach
-	void clearSecurityContext() {
-		SecurityContextHolder.clearContext();
+	@Test
+	void shouldRejectUnauthenticatedLogoutAndMeViaSecurityFilters() throws Exception {
+		mockMvc.perform(post("/api/v1/auth/logout"))
+				.andExpect(status().isUnauthorized())
+				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+				.andExpect(jsonPath("$.code").value("AUTHENTICATION_FAILED"));
+
+		mockMvc.perform(get("/api/v1/auth/me"))
+				.andExpect(status().isUnauthorized())
+				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+				.andExpect(jsonPath("$.code").value("AUTHENTICATION_FAILED"));
+
+		verifyNoInteractions(authService);
 	}
 
 	@Test
 	void shouldLogoutSpecificSessionAndClearSecurityContextWhenAuthenticated() throws Exception {
 		UUID userId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-		setAuthenticatedUser(userId, "ana.silva@uniflow.edu");
+		stubValidJwtAuthentication(userId, "ana.silva@uniflow.edu");
 
 		mockMvc.perform(post("/api/v1/auth/logout")
+						.header(HttpHeaders.AUTHORIZATION, "Bearer jwt.valido")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content("{\"refreshToken\":\"  rft_sessao_atual  \"}"))
 				.andExpect(status().isNoContent())
 				.andExpect(content().string(""));
 
 		ArgumentCaptor<LogoutRequest> captor = ArgumentCaptor.forClass(LogoutRequest.class);
-		verify(authService).logout(eq(userId), captor.capture());
+		verify(authService).logout(captor.capture());
 		assertThat(captor.getValue().refreshToken()).isEqualTo("rft_sessao_atual");
 		assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
 	}
@@ -347,22 +369,24 @@ class AuthControllerWebMvcTest {
 	@Test
 	void shouldLogoutAllActiveSessionsWhenRequestBodyIsOmitted() throws Exception {
 		UUID userId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-		setAuthenticatedUser(userId, "ana.silva@uniflow.edu");
+		stubValidJwtAuthentication(userId, "ana.silva@uniflow.edu");
 
-		mockMvc.perform(post("/api/v1/auth/logout"))
+		mockMvc.perform(post("/api/v1/auth/logout")
+						.header(HttpHeaders.AUTHORIZATION, "Bearer jwt.valido"))
 				.andExpect(status().isNoContent())
 				.andExpect(content().string(""));
 
-		verify(authService).logout(eq(userId), isNull());
+		verify(authService).logout(isNull());
 		assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
 	}
 
 	@Test
 	void shouldReturn400ProblemDetailWhenLogoutPayloadHasBlankRefreshToken() throws Exception {
 		UUID userId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-		setAuthenticatedUser(userId, "ana.silva@uniflow.edu");
+		stubValidJwtAuthentication(userId, "ana.silva@uniflow.edu");
 
 		mockMvc.perform(post("/api/v1/auth/logout")
+						.header(HttpHeaders.AUTHORIZATION, "Bearer jwt.valido")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content("{\"refreshToken\":\"   \"}"))
 				.andExpect(status().isBadRequest())
@@ -378,12 +402,13 @@ class AuthControllerWebMvcTest {
 	@Test
 	void shouldReturn403ProblemDetailWhenLogoutTargetsAnotherUsersRefreshToken() throws Exception {
 		UUID userId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-		setAuthenticatedUser(userId, "ana.silva@uniflow.edu");
+		stubValidJwtAuthentication(userId, "ana.silva@uniflow.edu");
 
 		doThrow(new UnauthorizedOperationException("Voce nao possui permissao para revogar este refresh token."))
-				.when(authService).logout(eq(userId), any(LogoutRequest.class));
+				.when(authService).logout(any(LogoutRequest.class));
 
 		mockMvc.perform(post("/api/v1/auth/logout")
+						.header(HttpHeaders.AUTHORIZATION, "Bearer jwt.valido")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content("{\"refreshToken\":\"rft_outro_usuario\"}"))
 				.andExpect(status().isForbidden())
@@ -397,6 +422,7 @@ class AuthControllerWebMvcTest {
 	@Test
 	void shouldReturnCurrentAuthenticatedUserOnGetAuthMeWithoutPasswordFields() throws Exception {
 		UUID userId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+		stubValidJwtAuthentication(userId, "ana.silva@uniflow.edu");
 		Instant timestamp = Instant.parse("2026-11-25T15:00:00Z");
 
 		when(authService.getCurrentUser()).thenReturn(new AuthUserResponse(
@@ -408,7 +434,8 @@ class AuthControllerWebMvcTest {
 				timestamp
 		));
 
-		mockMvc.perform(get("/api/v1/auth/me"))
+		mockMvc.perform(get("/api/v1/auth/me")
+						.header(HttpHeaders.AUTHORIZATION, "Bearer jwt.valido"))
 				.andExpect(status().isOk())
 				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.id").value(userId.toString()))
@@ -425,10 +452,13 @@ class AuthControllerWebMvcTest {
 
 	@Test
 	void shouldReturn401ProblemDetailWhenGetAuthMeFailsAuthenticationInService() throws Exception {
+		UUID userId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+		stubValidJwtAuthentication(userId, "ana.silva@uniflow.edu");
 		when(authService.getCurrentUser())
 				.thenThrow(new AuthenticationFailedException("Autenticacao necessaria ou credenciais invalidas."));
 
-		mockMvc.perform(get("/api/v1/auth/me"))
+		mockMvc.perform(get("/api/v1/auth/me")
+						.header(HttpHeaders.AUTHORIZATION, "Bearer jwt.valido"))
 				.andExpect(status().isUnauthorized())
 				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
 				.andExpect(jsonPath("$.status").value(401))
@@ -436,12 +466,10 @@ class AuthControllerWebMvcTest {
 				.andExpect(jsonPath("$.instance").value("/api/v1/auth/me"));
 	}
 
-	private static void setAuthenticatedUser(UUID userId, String email) {
-		AuthenticatedUser principal = new AuthenticatedUser(userId, email, StatusUsuario.ATIVO);
-		SecurityContext context = SecurityContextHolder.createEmptyContext();
-		context.setAuthentication(
-				UsernamePasswordAuthenticationToken.authenticated(principal, null, principal.getAuthorities())
-		);
-		SecurityContextHolder.setContext(context);
+	private void stubValidJwtAuthentication(UUID userId, String email) {
+		Usuario usuario = new Usuario("Ana Silva", email, "$2a$10$hashSecreto");
+		usuario.setId(userId);
+		when(jwtService.extractUserId("jwt.valido")).thenReturn(userId);
+		when(usuarioRepository.findById(userId)).thenReturn(Optional.of(usuario));
 	}
 }

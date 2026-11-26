@@ -89,6 +89,22 @@ class UsuarioServiceTest {
 	}
 
 	@Test
+	void shouldAvoidSelfConflictAndNormalizeWhenStoredEntityEmailHasMixedCase() {
+		Usuario usuario = org.mockito.Mockito.spy(createUsuario("Ana Silva", "ana.silva@uniflow.edu"));
+		when(usuario.getEmail()).thenReturn("Ana.Silva@UniFlow.EDU").thenCallRealMethod();
+		when(currentUserService.getCurrentUser()).thenReturn(usuario);
+		when(usuarioRepository.saveAndFlush(usuario)).thenReturn(usuario);
+
+		UsuarioResponse response = usuarioService.updateProfile(
+				new UpdateProfileRequest(null, "  ANA.SILVA@UNIFLOW.EDU ")
+		);
+
+		assertThat(response.email()).isEqualTo("ana.silva@uniflow.edu");
+		verify(usuarioRepository, never()).existsByEmailIgnoreCase(any());
+		verify(usuarioRepository).saveAndFlush(usuario);
+	}
+
+	@Test
 	void shouldUpdateNewNormalizedEmailAfterUniquenessCheck() {
 		Usuario usuario = createUsuario("Ana Silva", "ana.silva@uniflow.edu");
 		when(currentUserService.getCurrentUser()).thenReturn(usuario);

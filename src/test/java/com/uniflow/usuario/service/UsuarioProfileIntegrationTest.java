@@ -52,6 +52,7 @@ class UsuarioProfileIntegrationTest extends AbstractIntegrationTest {
 		AuthTokenResponse userB = registerAndLogin("Bruno Martins", "bruno.perfil@uniflow.edu");
 		UUID userAId = userA.usuario().id();
 		UUID userBId = userB.usuario().id();
+		String originalHashA = usuarioRepository.findById(userAId).orElseThrow().getSenhaHash();
 
 		// 1. Consulta GET /api/v1/usuarios/me ignora ?usuarioId=<B> e retorna somente o perfil de A
 		mockMvc.perform(get("/api/v1/usuarios/me")
@@ -65,7 +66,7 @@ class UsuarioProfileIntegrationTest extends AbstractIntegrationTest {
 				.andExpect(jsonPath("$.senha").doesNotExist())
 				.andExpect(jsonPath("$.senhaHash").doesNotExist());
 
-		// 2. PATCH /api/v1/usuarios/me atualiza nome e ignora tentativa de alterar id/status/senhaHash/usuarioId
+		// 2. PATCH /api/v1/usuarios/me atualiza nome e ignora tentativa de alterar id/status/senha/senhaHash/usuarioId
 		mockMvc.perform(patch("/api/v1/usuarios/me")
 						.queryParam("usuarioId", userBId.toString())
 						.header(HttpHeaders.AUTHORIZATION, "Bearer " + userA.accessToken())
@@ -76,6 +77,7 @@ class UsuarioProfileIntegrationTest extends AbstractIntegrationTest {
 								  "usuarioId": "%s",
 								  "nome": "  Ana Carolina Souza  ",
 								  "status": "BLOQUEADO",
+								  "senha": "SenhaForjada@999",
 								  "senhaHash": "$2a$10$hashForjado"
 								}
 								""".formatted(userBId, userBId)))
@@ -89,8 +91,10 @@ class UsuarioProfileIntegrationTest extends AbstractIntegrationTest {
 		Usuario userBDb = usuarioRepository.findById(userBId).orElseThrow();
 		assertThat(userADb.getNome()).isEqualTo("Ana Carolina Souza");
 		assertThat(userADb.getStatus()).isEqualTo(StatusUsuario.ATIVO);
-		assertThat(userADb.getUpdatedAt()).isAfterOrEqualTo(userADb.getCreatedAt());
+		assertThat(userADb.getSenhaHash()).isEqualTo(originalHashA).isNotEqualTo("$2a$10$hashForjado");
+		assertThat(userADb.getUpdatedAt()).isAfter(userADb.getCreatedAt());
 		assertThat(userBDb.getNome()).isEqualTo("Bruno Martins");
+		assertThat(userBDb.getEmail()).isEqualTo("bruno.perfil@uniflow.edu");
 
 		// 3. Atualizacao de e-mail para endereco ja pertencente a B retorna 409 CONFLICT sem corromper A nem B
 		mockMvc.perform(patch("/api/v1/usuarios/me")
@@ -102,13 +106,40 @@ class UsuarioProfileIntegrationTest extends AbstractIntegrationTest {
 				.andExpect(jsonPath("$.status").value(409))
 				.andExpect(jsonPath("$.code").value("RESOURCE_CONFLICT"));
 
-		// 4. Atualizacao valida de e-mail persiste em lowercase e autentica no /login com novo e-mail
+		assertThat(usuarioRepository.findById(userAId).orElseThrow().getEmail()).isEqualTo("ana.perfil@uniflow.edu");
+		assertThat(usuarioRepository.findById(userBId).orElseThrow().getEmail()).isEqualTo("bruno.perfil@uniflow.edu");
+
+		// 4. Atualizacao valida de e-mail persiste em lowercase, reflete em GET /usuarios/me, aceita reenvio do mesmo e-mail e invalida login pelo e-mail antigo
 		mockMvc.perform(patch("/api/v1/usuarios/me")
 						.header(HttpHeaders.AUTHORIZATION, "Bearer " + userA.accessToken())
 						.contentType(MediaType.APPLICATION_JSON)
 						.content("{\"email\":\"  Ana.Souza@UniFlow.EDU  \"}"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.email").value("ana.souza@uniflow.edu"));
+
+		mockMvc.perform(get("/api/v1/usuarios/me")
+						.header(HttpHeaders.AUTHORIZATION, "Bearer " + userA.accessToken()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.nome").value("Ana Carolina Souza"))
+				.andExpect(jsonPath("$.email").value("ana.souza@uniflow.edu"));
+
+		mockMvc.perform(patch("/api/v1/usuarios/me")
+						.header(HttpHeaders.AUTHORIZATION, "Bearer " + userA.accessToken())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("{\"email\":\"  ANA.SOUZA@UNIFLOW.EDU  \"}"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.email").value("ana.souza@uniflow.edu"));
+
+		mockMvc.perform(post("/api/v1/auth/login")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "email": "ana.perfil@uniflow.edu",
+								  "senha": "UniFlow@2026"
+								}
+								"""))
+				.andExpect(status().isUnauthorized())
+				.andExpect(jsonPath("$.code").value("AUTHENTICATION_FAILED"));
 
 		mockMvc.perform(post("/api/v1/auth/login")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -134,7 +165,8 @@ class UsuarioProfileIntegrationTest extends AbstractIntegrationTest {
 				.andExpect(status().isBadRequest())
 				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
 				.andExpect(jsonPath("$.status").value(400))
-				.andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
+				.andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
+				.andExpect(jsonPath("$.fieldErrors[0].message").value("informe ao menos um campo permitido para atualizacao (nome ou email)"));
 
 		Usuario entity = usuarioRepository.findById(user.usuario().id()).orElseThrow();
 		entity.setStatus(StatusUsuario.BLOQUEADO);

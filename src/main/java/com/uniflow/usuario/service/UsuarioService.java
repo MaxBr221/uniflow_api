@@ -59,8 +59,9 @@ public class UsuarioService {
 			usuario.setNome(request.nome());
 		}
 
-		if (request.email() != null && !request.email().equals(usuario.getEmail())) {
-			if (usuarioRepository.existsByEmailIgnoreCase(request.email())) {
+		if (request.email() != null) {
+			if (!request.email().equalsIgnoreCase(usuario.getEmail())
+					&& usuarioRepository.existsByEmailIgnoreCase(request.email())) {
 				throw new ConflictException(EMAIL_DUPLICADO_MESSAGE);
 			}
 			usuario.setEmail(request.email());

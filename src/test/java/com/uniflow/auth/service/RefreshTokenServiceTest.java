@@ -290,6 +290,32 @@ class RefreshTokenServiceTest {
 		verify(refreshTokenRepository, never()).saveAndFlush(any());
 	}
 
+	@Test
+	void shouldEnforceNullAndBlankGuardsAndTrimTokenOnRotate() {
+		assertThatThrownBy(() -> refreshTokenService.issue(null))
+				.isInstanceOf(NullPointerException.class);
+		Usuario semId = new Usuario("Ana", "ana@uniflow.edu", "$2a$10$hash");
+		assertThatThrownBy(() -> refreshTokenService.issue(semId))
+				.isInstanceOf(NullPointerException.class);
+
+		assertThatThrownBy(() -> refreshTokenService.rotate(null))
+				.isInstanceOf(AuthenticationFailedException.class);
+		assertThatThrownBy(() -> refreshTokenService.revokeAllForUser(null))
+				.isInstanceOf(NullPointerException.class);
+		assertThatThrownBy(() -> refreshTokenService.revokeTokenForUser(null, "rft_valido"))
+				.isInstanceOf(NullPointerException.class);
+		UUID userId = UUID.randomUUID();
+		assertThatThrownBy(() -> refreshTokenService.revokeTokenForUser(userId, null))
+				.isInstanceOf(IllegalArgumentException.class);
+		assertThatThrownBy(() -> refreshTokenService.revokeTokenForUser(userId, "   "))
+				.isInstanceOf(IllegalArgumentException.class);
+		verifyNoInteractions(refreshTokenRepository);
+
+		RefreshTokenService.RotatedRefreshToken nullUserRecord =
+				new RefreshTokenService.RotatedRefreshToken(null, "rft_segredo_nao_vazar", null);
+		assertThat(nullUserRecord.toString()).doesNotContain("rft_segredo_nao_vazar");
+	}
+
 	private static Usuario activeUsuario() {
 		Usuario usuario = new Usuario("Ana Silva", "ana.silva@uniflow.edu", "$2a$10$hashSalvo");
 		usuario.setId(UUID.randomUUID());

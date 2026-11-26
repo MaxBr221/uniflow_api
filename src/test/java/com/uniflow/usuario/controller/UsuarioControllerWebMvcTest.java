@@ -28,6 +28,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -159,7 +160,9 @@ class UsuarioControllerWebMvcTest {
 				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
 				.andExpect(jsonPath("$.status").value(400))
 				.andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
-				.andExpect(jsonPath("$.instance").value("/api/v1/usuarios/me"));
+				.andExpect(jsonPath("$.instance").value("/api/v1/usuarios/me"))
+				.andExpect(jsonPath("$.fieldErrors", hasSize(1)))
+				.andExpect(jsonPath("$.fieldErrors[0].message").value("informe ao menos um campo permitido para atualizacao (nome ou email)"));
 
 		mockMvc.perform(patch("/api/v1/usuarios/me")
 						.header(HttpHeaders.AUTHORIZATION, "Bearer jwt.valido")
